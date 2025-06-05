@@ -13,6 +13,8 @@ import {
   Book
 } from "lucide-react";
 
+import me from './assets/me.png';
+
 
 // BB-8 Component
 const BB8 = () => {
@@ -410,34 +412,58 @@ const App = () => {
 
   const experiences = [
     {
-      title: "Senior Software Engineer",
-      company: "TechCorp Inc.",
-      period: "2022 - Present",
+      title: "Lead Software Developer",
+      company: "Broadbill Energy",
+      period: "2025-Present",
       description:
-        "Led development of scalable web applications using React, Node.js, and AWS. Mentored junior developers and improved system performance by 40%.",
-      technologies: ["React", "Node.js", "AWS", "TypeScript"],
+        "Led development of scalable web applications using React, Node.js, and Azure. Mentored junior developers and improved system performance by 40%.",
+      technologies: ["React", "Node.js", "Azure", "JavaScript", "TypeScript"],
     },
     {
-      title: "Full Stack Developer",
-      company: "StartupXYZ",
-      period: "2020 - 2022",
+      title: "Machine Learning Researcher and Graduate Teaching Assistant",
+      company: "University of Calgary, Schulich School of Engineering",
+      period: "2023 - 2025",
       description:
         "Built end-to-end solutions for fintech applications. Implemented CI/CD pipelines and established testing frameworks.",
       technologies: ["Vue.js", "Python", "PostgreSQL", "Docker"],
     },
     {
-      title: "Software Developer Intern",
-      company: "BigTech Solutions",
-      period: "2019 - 2020",
+      title: "Machine Learning Engineer",
+      company: "CyberX",
+      period: "2023 - 2023",
       description:
         "Developed mobile applications and contributed to open-source projects. Collaborated with cross-functional teams on product features.",
       technologies: ["React Native", "Java", "MongoDB", "GraphQL"],
+    },
+    {
+      title: "Software Engineer Intern",
+      company: "KPMG",
+      period: "2022 - 2022",
+      description:
+        "Assisted in developing web applications and APIs. Participated in code reviews and contributed to team documentation.",
+      technologies: ["Angular", "Node.js", "MySQL", "Git"],
+    },
+    {
+      title: "Machine Learning Researcher",
+      company: "University of British Columbia, Department of Mathematics",
+      period: "2020 - 2020",
+      description:
+        "Developed and maintained web applications using React and Node.js. Implemented RESTful APIs and integrated third-party services.",
+      technologies: ["React", "Node.js", "Express", "MongoDB"],
+    },
+    {
+      title: "Engineering Intern",
+      company: "Discover Battery",
+      period: "2019-2020",
+      description:
+        "Contributed to the development of a mobile application using React Native. Assisted in backend development with Node.js.",
+      technologies: ["React Native", "Node.js", "Firebase", "Git"],
     },
   ];
 
   const projects = [
     {
-      title: "E-Commerce Platform",
+      title: "giraff ai",
       description:
         "Full-stack e-commerce solution with real-time inventory management, payment processing, and admin dashboard.",
       technologies: ["React", "Express.js", "Stripe API", "Redis"],
@@ -596,7 +622,7 @@ const App = () => {
         {/* Brand at bottom */}
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-bold">JD</span>
+            <span className="text-white text-sm font-bold">LW</span>
           </div>
         </div>
       </nav>
@@ -609,15 +635,17 @@ const App = () => {
         id="about"
   className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-20"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 scroll-fade"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 scroll-fade"></div>
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000"></div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10 scroll-fade">
           <div className="mb-8 animate-fade-in-up">
-            <div className="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center animate-float shadow-2xl">
-              <span className="text-4xl font-bold text-white">LW</span>
+            <div className="w-42 h-42 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center animate-float shadow-2xl">
+              {/* <span className="text-4xl font-bold text-white">LW</span>
+               */}
+               <img src={me} alt="Leo Wei" className="w-full h-full object-cover rounded-full" />
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 animate-fade-in-up animation-delay-500">
               Leo Wei
@@ -773,7 +801,7 @@ const App = () => {
       >
         <div className="w-full scroll-fade">
           <h2 className="text-4xl font-bold text-center mb-16 text-black-900">
-            Activities
+            Extracurricular
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {extracurriculars.map((activity, index) => (
@@ -873,7 +901,7 @@ const App = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 bg-gray-900 text-white snap-start md:pl-20">
+      <footer className="py-12 px-6 bg-gradient-to-r from-[#1e40af] to-[#7c3aed] text-white snap-start md:pl-20">
         <div className="w-full text-center">
           <h3 className="text-2xl font-bold mb-4">Let's Connect</h3>
           <p className="text-gray-400 mb-6">
