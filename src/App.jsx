@@ -15,6 +15,17 @@ import {
 
 import me from './assets/me.png';
 
+import giraff_ai from './assets/giraff_ai_frontend_demo.gif';
+import techstart from './assets/techstart.gif';
+import stanford from './assets/stanford.jpg';
+import canis from './assets/canis.png';
+import drone from './assets/drone.JPG';
+import nectarfy from './assets/nectarfy.JPG';
+import rl from './assets/rl.JPG';
+import htn from './assets/htn.png';
+import healthcare_sensor from './assets/healthcare_sensor.gif';
+import bizhacks from './assets/bizhacks.png';
+
 
 // BB-8 Component
 const BB8 = () => {
@@ -400,64 +411,57 @@ const App = () => {
     }
   };
 
-  // Helper to get the next section id
-  const sectionOrder = [
-    "about",
-    "experience",
-    "projects",
-    "extracurricular",
-    "academics",
-    "skills",
-  ];
-
   const experiences = [
     {
       title: "Lead Software Developer",
       company: "Broadbill Energy",
       period: "2025-Present",
       description:
-        "Led development of scalable web applications using React, Node.js, and Azure. Mentored junior developers and improved system performance by 40%.",
-      technologies: ["React", "Node.js", "Azure", "JavaScript", "TypeScript"],
+        ["Led development of company's full-stack inventory management platform using Next.js, Node.js, and PostgreSQL. Executed zero-downtime migration of a 10GB legacy SQL database to PostgreSQL. Cut API latency by implementing caching layer and query deduplication. Built Excel automation with Typescript, reducing manual data entry time.",
+        ],
+      technologies: ["Next.js", "Node.js", "Azure","PostgreSQL", "Redis", "Docker", "JavaScript", "TypeScript"],
     },
     {
       title: "Machine Learning Researcher and Graduate Teaching Assistant",
       company: "University of Calgary, Schulich School of Engineering",
       period: "2023 - 2025",
       description:
-        "Built end-to-end solutions for fintech applications. Implemented CI/CD pipelines and established testing frameworks.",
-      technologies: ["Vue.js", "Python", "PostgreSQL", "Docker"],
+        [    "Developed a PEFT framework (soft prompts + quantization) for LLMs, achieving SOTA benchmark results. Led RLHF-tuned LLM medical summarization project and designed a federated learning system for hospital-scale time-series forecasting.",
+          "Teaching Assistant for undergraduate full stack web developement course, undergraduate capstone project course, and graduate course on advanced data structures and algorithms."
+        ],
+      technologies: ["PyTorch", "Transformers", "Hugging Face", "Python"],
     },
     {
       title: "Machine Learning Engineer",
       company: "CyberX",
       period: "2023 - 2023",
       description:
-        "Developed mobile applications and contributed to open-source projects. Collaborated with cross-functional teams on product features.",
-      technologies: ["React Native", "Java", "MongoDB", "GraphQL"],
+        ["Increased profitability of Uniswap V3 liquidity positions by using unsupervised learning techniques to optimize trading strategies. Built ETL pipeline for data extraction and transformation. Generated actionable market insights for over 100,000 users."],
+      technologies: ["TensorFlow", "Scikit-Learn", "Python"],
     },
     {
       title: "Software Engineer Intern",
       company: "KPMG",
       period: "2022 - 2022",
       description:
-        "Assisted in developing web applications and APIs. Participated in code reviews and contributed to team documentation.",
-      technologies: ["Angular", "Node.js", "MySQL", "Git"],
+        ["Improved frontend test coverage. Improved performance of internal data analytics tool. Reduced API response time through query optimization and caching."],
+      technologies: ["React", "Django", "MySQL", "JavaScript", "Python"],
     },
     {
       title: "Machine Learning Researcher",
       company: "University of British Columbia, Department of Mathematics",
       period: "2020 - 2020",
       description:
-        "Developed and maintained web applications using React and Node.js. Implemented RESTful APIs and integrated third-party services.",
-      technologies: ["React", "Node.js", "Express", "MongoDB"],
+        ["Developed simulation with OpenAI Gym for PID tuning in control systems. Optimized PID tuning with DDPG algorithm, reducing settling time."],
+      technologies: ["OpenAI Gym", "NumPy", "Pytorch", "Python"],
     },
     {
       title: "Engineering Intern",
       company: "Discover Battery",
       period: "2019-2020",
       description:
-        "Contributed to the development of a mobile application using React Native. Assisted in backend development with Node.js.",
-      technologies: ["React Native", "Node.js", "Firebase", "Git"],
+        ["Designed and produced bill of materials for battery pack manufacturing. Developed automated testing system for battery packs using Python and Arduino."],
+      technologies: ["Solidworks", "Arduino", "Python"],
     },
   ];
 
@@ -466,32 +470,77 @@ const App = () => {
       title: "giraff ai",
       description:
         "Full-stack e-commerce solution with real-time inventory management, payment processing, and admin dashboard.",
-      technologies: ["React", "Express.js", "Stripe API", "Redis"],
-      github: "#",
-      demo: "#",
+      technologies: ["Next.js", "FastAPI", "Langchain", "Neo4j", "Pinecone"],
+      // github: "#",
+      demo: "https://giraff.ai",
       image:
-        "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=300&fit=crop&crop=center",
+        giraff_ai,
     },
     {
-      title: "AI Chat Application",
+      title: "Stanford Treehacks",
       description:
         "Real-time chat application with AI-powered responses, user authentication, and message encryption.",
-      technologies: ["Next.js", "Socket.io", "OpenAI API", "MongoDB"],
+      technologies: ["React", "Flask", "RAG", "Python"],
       github: "#",
       demo: "#",
       image:
-        "https://images.unsplash.com/photo-1587560699334-cc4ff634909a?w=600&h=300&fit=crop&crop=center",
+        stanford,
     },
     {
-      title: "Task Management System",
+      title: "RL Robot Arm",
       description:
         "Collaborative project management tool with drag-and-drop interface, notifications, and team analytics.",
       technologies: ["React", "Firebase", "Material-UI", "Chart.js"],
       github: "#",
       demo: "#",
       image:
-        "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=300&fit=crop&crop=center",
+        techstart,
     },
+    {
+      title: "Hack the North",
+      description:
+        "AI-powered healthcare sensor system for real-time patient monitoring and alerting.",
+      technologies: ["Arduino", "Python", "Flask", "TensorFlow"],
+      github: "#",
+      demo: "#",
+      image:
+        htn,
+    },
+    {title: "Nectarfy",
+      description:
+        "AI-powered personal finance app that analyzes spending habits and provides personalized budgeting recommendations.",
+      technologies: ["React", "Flask", "TensorFlow", "Python"],
+      github: "#",
+      demo: "#",
+      image:
+        nectarfy,
+    },
+    {
+      title: "Canis",
+      description:
+        "AI-powered chatbot for mental health support, providing resources and conversation.",
+      technologies: ["React", "Flask", "TensorFlow", "Python"],
+      github: "#",
+      demo: "#",
+      image:
+        canis,
+    },
+    {title: "KIMORE dataset visualization",
+      description:
+        "Interactive visualization of KIMORE dataset for machine learning research, with filtering and sorting capabilities.",
+      technologies: ["React", "D3.js", "Python"],
+      github: "#",
+      demo: "#",
+      image:
+        healthcare_sensor,
+    },
+    {title: "Drone Control System",
+      description:
+        "AI-powered drone control system for autonomous navigation and obstacle avoidance.",
+      technologies: ["Python", "OpenCV", "TensorFlow"],
+      image:
+        drone,
+    }
   ];
 
   const skills = [
@@ -536,26 +585,33 @@ const App = () => {
 
   const extracurriculars = [
     {
-      title: "Open Source Contributor",
-      organization: "Various Projects",
+      title: "VP Events and Project Manager",
+      organization: "TechStart",
       description:
-        "Active contributor to popular open-source libraries with 500+ stars and 50+ merged PRs.",
-      impact: "Improved developer experience for thousands of users",
+        "Led a team of 10 in organizing tech events and tech talks with industry guests, reaching over 500 students.",
+      impact: "Increased event attendance by 50% through targeted marketing and engaging content",
     },
     {
-      title: "Tech Meetup Organizer",
-      organization: "Local Tech Community",
+      title: "Aerostructure Engineer",
+      organization: "UBC Rocket",
       description:
         "Organized monthly meetups for 200+ developers, featuring talks on emerging technologies.",
       impact: "Built a thriving local tech community",
     },
     {
-      title: "Coding Bootcamp Mentor",
-      organization: "CodePath",
+      title: "Mechanical Subteam Engineer",
+      organization: "UBC Robotics",
       description:
         "Mentored 20+ students in web development, helping them transition into tech careers.",
       impact: "90% mentee job placement rate",
     },
+    {
+      title: "Painting Business Owner",
+      organization: "Self-employed",
+      description:
+        "Founded and managed a painting business, overseeing all aspects from marketing to client relations.",
+      impact: "Generated 30K + in revenue in the one summer, grew team from 1 to 8 members",
+    }
   ];
 
   const Card = ({ children, className = "" }) => (
@@ -679,46 +735,48 @@ const App = () => {
       </section>
 
       {/* Experience Section */}
-      <section
-        id="experience"
-        className="snap-start py-20 px-6 bg-white md:pl-20 relative"
-      >
-        <div className="w-full scroll-fade">
-          <h2 className="text-4xl font-bold text-center mb-16 text-gray-900">
-            Experience
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {experiences.map((exp, index) => (
-              <Card key={index} className="p-6 h-full">
-                <div className="flex flex-col h-full">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    {exp.title}
-                  </h3>
-                  <p className="text-blue-600 font-semibold mb-2">
-                    {exp.company}
-                  </p>
-                  <p className="text-gray-500 text-sm mb-4">{exp.period}</p>
-                  <p className="text-gray-700 mb-4 flex-grow">
-                    {exp.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {exp.technologies.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            ))}
+        <section
+          id="experience"
+          className="snap-start py-20 px-6 bg-white md:pl-20 relative"
+        >
+          <div className="w-full scroll-fade">
+            <h2 className="text-4xl font-bold text-center mb-16 text-gray-900">
+          Experience
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {experiences.map((exp, index) => (
+            <Card key={index} className="p-6 h-full">
+              <div className="flex flex-col h-full">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              {exp.title}
+            </h3>
+            <p className="text-blue-600 font-semibold mb-2">
+              {exp.company}
+            </p>
+            <p className="text-gray-500 text-sm mb-4">{exp.period}</p>
+            <div className="text-gray-700 mb-4 flex-grow space-y-2">
+              {exp.description.map((line, lineIndex) => (
+                <div key={lineIndex}>{line}</div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {exp.technologies.map((tech, techIndex) => (
+                <span
+              key={techIndex}
+              className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+                >
+              {tech}
+                </span>
+              ))}
+            </div>
+              </div>
+            </Card>
+          ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Projects Section */}
+        {/* Projects Section */}
       <section
         id="projects"
         className="snap-start py-20 px-6 md:pl-20 relative"
@@ -738,16 +796,7 @@ const App = () => {
                       className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent group-hover:from-black/20 transition-all duration-500"></div>
-                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                      <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
-                        <div className="flex items-center space-x-2">
-                          <Github size={16} className="text-gray-700" />
-                          <span className="text-gray-700 text-sm font-medium">
-                            Code
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+
                   </div>
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -767,13 +816,14 @@ const App = () => {
                       ))}
                     </div>
                     <div className="flex space-x-4">
-                      <a
+                      {project.github? <a
                         href={project.github}
                         className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-all duration-300 transform hover:scale-105"
                       >
                         <Github size={18} />
                         <span>Code </span>
-                      </a>
+                      </a> : null}
+                    {project.demo ? (
                       <a
                         href={project.demo}
                         className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-all duration-300 transform hover:scale-105"
@@ -781,6 +831,9 @@ const App = () => {
                         <ExternalLink size={18} />
                         <span>Demo</span>
                       </a>
+                    ) : (
+                      <span className="text-gray-400 italic"></span>
+                    )}
                     </div>
                   </div>
                 </div>
@@ -801,7 +854,7 @@ const App = () => {
       >
         <div className="w-full scroll-fade">
           <h2 className="text-4xl font-bold text-center mb-16 text-black-900">
-            Extracurricular
+            Extracurricular Activities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
             {extracurriculars.map((activity, index) => (
@@ -888,7 +941,7 @@ const App = () => {
                   {skillGroup.items.map((skill, skillIndex) => (
                     <div
                       key={skillIndex}
-                      className="px-3 py-2 bg-gray-100 rounded-lg text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 transform hover:scale-105 cursor-pointer"
+                      className="px-3 py-2 bg-gray-100 rounded-lg text-gray-700"
                     >
                       {skill}
                     </div>
