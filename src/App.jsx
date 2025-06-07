@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";import "./App.css";
+import React, { useState, useEffect, useCallback } from "react"; import "./App.css";
 import {
   Github,
   Linkedin,
@@ -57,7 +57,7 @@ const BB8 = () => {
   useEffect(() => {
     const mouseMoveHandler = (e) => handleMouseMove(e);
     document.addEventListener('mousemove', mouseMoveHandler);
-    
+
     const interval = setInterval(() => {
       movement();
     }, 1);
@@ -73,8 +73,8 @@ const BB8 = () => {
   const styles = {
     bb8: {
       position: 'fixed',
-      marginLeft: -d/2,
-      marginRight: -d/2,
+      marginLeft: -d / 2,
+      marginRight: -d / 2,
       width: d,
       bottom: '10%',
       left: 0,
@@ -298,7 +298,7 @@ const BB8 = () => {
       background: '#3A271C',
       boxShadow: '3px 0 35px #3A271C',
       borderRadius: '50%',
-      height: d/6,
+      height: d / 6,
       opacity: 0.25,
       position: 'absolute',
       width: d,
@@ -346,13 +346,13 @@ const BB8 = () => {
       <div style={styles.ball}>
         <div style={styles.linesOne}></div>
         <div style={styles.linesTwo}></div>
-        <div style={{...styles.ringBase, ...styles.ringOne}}>
+        <div style={{ ...styles.ringBase, ...styles.ringOne }}>
           <div style={styles.ringAfter}></div>
         </div>
-        <div style={{...styles.ringBase, ...styles.ringTwo}}>
+        <div style={{ ...styles.ringBase, ...styles.ringTwo }}>
           <div style={styles.ringTwoAfter}></div>
         </div>
-        <div style={{...styles.ringBase, ...styles.ringThree}}>
+        <div style={{ ...styles.ringBase, ...styles.ringThree }}>
           <div style={styles.ringThreeAfter}></div>
         </div>
       </div>
@@ -419,14 +419,14 @@ const App = () => {
       description:
         ["Led development of company's full-stack inventory management platform using Next.js, Node.js, and PostgreSQL. Executed zero-downtime migration of a 10GB legacy SQL database to PostgreSQL. Cut API latency by implementing caching layer and query deduplication. Built Excel automation with Typescript, reducing manual data entry time.",
         ],
-      technologies: ["Next.js", "Node.js", "Azure","PostgreSQL", "Redis", "Docker", "JavaScript", "TypeScript"],
+      technologies: ["Next.js", "Node.js", "Azure", "PostgreSQL", "Redis", "Docker", "JavaScript", "TypeScript"],
     },
     {
       title: "Machine Learning Researcher and Graduate Teaching Assistant",
       company: "University of Calgary, Schulich School of Engineering",
       period: "2023 - 2025",
       description:
-        [    "Developed a PEFT framework (soft prompts + quantization) for LLMs, achieving SOTA benchmark results. Led RLHF-tuned LLM medical summarization project and designed a federated learning system for hospital-scale time-series forecasting.",
+        ["Developed a PEFT framework (soft prompts + quantization) for LLMs, achieving SOTA benchmark results. Led RLHF-tuned LLM medical summarization project and designed a federated learning system for hospital-scale time-series forecasting.",
           "Teaching Assistant for undergraduate full stack web developement course, undergraduate capstone project course, and graduate course on advanced data structures and algorithms."
         ],
       technologies: ["PyTorch", "Transformers", "Hugging Face", "Python"],
@@ -480,64 +480,67 @@ const App = () => {
       title: "Stanford Treehacks",
       description:
         "Real-time chat application with AI-powered responses, user authentication, and message encryption.",
-      technologies: ["React", "Flask", "RAG", "Python"],
-      github: "#",
-      demo: "#",
+      technologies: ["React", "Flask", "RAG", "Python", "Intel Prediction Guard", "Langchain"],
+      github: "https://github.com/leowei31/Treehacks2024",
+      demo: "https://devpost.com/software/llm2graph",
       image:
         stanford,
     },
     {
       title: "RL Robot Arm",
       description:
-        "Collaborative project management tool with drag-and-drop interface, notifications, and team analytics.",
-      technologies: ["React", "Firebase", "Material-UI", "Chart.js"],
-      github: "#",
-      demo: "#",
+        "Led a team of 7 students to build a reinforcement learning-based robotic arm that learns to pick and place objects using computer vision. Achieve 90% success rate in object manipulation tasks.",
+      technologies: ["OpenAI Gym", "OpenCV", "PyTorch", "Python"],
+      github: "https://github.com/leowei31/RoboticArmRL",
+      demo: "https://www.youtube.com/watch?v=WiJtKO3sOtU&ab_channel=Naveed",
       image:
         techstart,
     },
     {
       title: "Hack the North",
       description:
-        "AI-powered healthcare sensor system for real-time patient monitoring and alerting.",
-      technologies: ["Arduino", "Python", "Flask", "TensorFlow"],
-      github: "#",
-      demo: "#",
+        "Developed a Microsoft Teams bot that helps users manage tasks and deadlines using AI. Bot summarizes group conversations, aggregates all direct message and generates calendar with to dos.",
+      technologies: ["React", "Flask", "Cohere", "CockroachDB", "Azure"],
+      github: "https://github.com/leowei31/HackTheNorth2023",
+      demo: "https://devpost.com/software/taskkeepr",
       image:
         htn,
     },
-    {title: "Nectarfy",
+    {
+      title: "Nectarfy",
       description:
-        "AI-powered personal finance app that analyzes spending habits and provides personalized budgeting recommendations.",
-      technologies: ["React", "Flask", "TensorFlow", "Python"],
-      github: "#",
-      demo: "#",
+        "Nectarfy is an app that allows beekeepers to connect to their smarthives through Bluetooth, and brings beekeepers together in a community. It provides real-time hive monitoring, data visualization, and community features.",
+      technologies: ["Flutter", "Firebase", "Express.js", "Blutooth Low Energy", "Arduino"],
+      github: "https://github.com/leowei31/nectarfy-app",
+      // demo: "#",
       image:
         nectarfy,
     },
     {
-      title: "Canis",
+      title: "Canadian Network on Information and Security Hackathon, Winner",
       description:
-        "AI-powered chatbot for mental health support, providing resources and conversation.",
-      technologies: ["React", "Flask", "TensorFlow", "Python"],
-      github: "#",
-      demo: "#",
+        "AI-powered news summarization and fact-checking tool that helps users stay informed and avoid misinformation.",
+      technologies: ["NLTK", "Matplotlib", "d3.js", "Spacy", "Node.js"],
+      github: "https://github.com/leowei31/CANIS_hackathon",
+      demo: "https://devpost.com/software/news-guardian",
       image:
         canis,
     },
-    {title: "KIMORE dataset visualization",
+    {
+      title: "KIMORE dataset visualization",
       description:
-        "Interactive visualization of KIMORE dataset for machine learning research, with filtering and sorting capabilities.",
-      technologies: ["React", "D3.js", "Python"],
-      github: "#",
-      demo: "#",
+        "Animation tool for visualizing kinematic and dynamic data from the KIMORE dataset, used in healthcare sensor research for physical rehabilitation.",
+      technologies: ["Matplotlib", "Pandas", "Python", "NumPy"],
+      github: "https://github.com/leowei31/KIMORE_Data_Visualization",
+      // demo: "#",
       image:
         healthcare_sensor,
     },
-    {title: "Drone Control System",
+    {
+      title: "Drone Control System",
       description:
         "AI-powered drone control system for autonomous navigation and obstacle avoidance.",
-      technologies: ["Python", "OpenCV", "TensorFlow"],
+      technologies: ["Python", "OpenCV", "TensorFlow", "Arduino"],
       image:
         drone,
     }
@@ -545,41 +548,69 @@ const App = () => {
 
   const skills = [
     {
-      category: "Frontend",
+      category: "Languages",
       items: [
-        "React",
-        "Vue.js",
-        "TypeScript",
-        "Tailwind CSS",
-        "Next.js",
-        "Angular",
-      ],
-    },
-    {
-      category: "Backend",
-      items: [
-        "Node.js",
         "Python",
+        "JavaScript",
+        "TypeScript",
+        "C++",
         "Java",
-        "Express.js",
-        "Django",
-        "Spring Boot",
+        "Kotlin",
+        "Rust",
+        "Cypher",
+        "SQL",
       ],
     },
     {
-      category: "Database",
+      category: "AI & Machine Learning",
       items: [
+        "Natural Language Processing",
+        "Computer Vision",
+        "TensorFlow",
+        "PyTorch",
+        "Scikit-Learn",
+        "Hugging Face",
+        "Transformers",
+        "Langchain",
+        "OpenAI Gym",
+        "RAG",
+        "Reinforcement Learning",
+        "Federated Learning"
+      ],
+    },
+    {
+      category: "Data & Cloud Technologies",
+      items: [
+        "MySQL",
         "PostgreSQL",
         "MongoDB",
-        "Redis",
-        "MySQL",
+        "Neo4j",
         "Firebase",
-        "DynamoDB",
+        "Redis",
+        "Supabase",
+        "Pinecone",
+        "Docker",
+        "Databricks",
+        "Azure",
+        "AWS",
       ],
     },
     {
-      category: "DevOps",
-      items: ["AWS", "Docker", "Kubernetes", "CI/CD", "Jenkins", "Terraform"],
+      category: "Web & Mobile Development",
+      items: [
+        "React",
+        "Next.js",
+        "React Native",
+        "Flutter",
+        "Django",
+        "Flask",
+        "FastAPI",
+        "Node.js",
+        "Express.js",
+        "Tailwind CSS",
+        "HTML/CSS",
+        "RESTful APIs",
+      ],
     },
   ];
 
@@ -588,30 +619,50 @@ const App = () => {
       title: "VP Events and Project Manager",
       organization: "TechStart",
       description:
-        "Led a team of 10 in organizing tech events and tech talks with industry guests, reaching over 500 students.",
-      impact: "Increased event attendance by 50% through targeted marketing and engaging content",
+        "Led a team of 5 in organizing tech events and tech talks with industry guests, reaching over 500 students. Lead project manager for reinforcement learning robotics project, coordinating development and deployment.",
+      impact: "Held 3+ events per semester, increasing student engagement by 30%.",
     },
     {
       title: "Aerostructure Engineer",
       organization: "UBC Rocket",
       description:
-        "Organized monthly meetups for 200+ developers, featuring talks on emerging technologies.",
-      impact: "Built a thriving local tech community",
+        "Designed and built rocket structures for high-altitude launches, including nose cones, fins, and payload bays.",
+      impact: "Achieved apogee of 3,000 feet with a 10% weight reduction in rocket structure.",
     },
     {
       title: "Mechanical Subteam Engineer",
       organization: "UBC Robotics",
       description:
-        "Mentored 20+ students in web development, helping them transition into tech careers.",
-      impact: "90% mentee job placement rate",
+        "Designed and built mechanical systems for autonomous robots, including chassis, arms, and sensors.",
+      impact: "Improved drivetrain efficiency by 20% through optimized gear ratios and weight distribution.",
     },
     {
-      title: "Painting Business Owner",
-      organization: "Self-employed",
+      title: "Co-Founder and lead developer",
+      organization: "Startup, E@UBC Incubator",
       description:
-        "Founded and managed a painting business, overseeing all aspects from marketing to client relations.",
-      impact: "Generated 30K + in revenue in the one summer, grew team from 1 to 8 members",
-    }
+        "Startup incubator program at UBC, providing mentorship and resources to early-stage startups.",
+      impact: "First place at 2021-2022 Cohort Demo Day. Second place at RBC Get Seeded.",
+    },
+  ];
+
+    const academics = [
+
+    {
+      title: "Masters of Science in Software Engineering",
+      organization: "University of Calgary",
+      description:
+        [
+          "Evolve to innovate scholarship",
+          "Graduate assistant scholarship",
+          "ACM SIGKDD International Conference on Knowledge Discovery and Data Mining 2023: Published FL Workshop Paper.",
+        ],
+    },
+    {
+      title: "Bachelor of Applied Science in Mechanical Engineering with a Minor in Entrepreneurship",
+      organization: "University of British Columbia",
+      description:
+        ["Dean's Honor List", "UBC Engineering Co-op Scholarship"],
+    },
   ];
 
   const Card = ({ children, className = "" }) => (
@@ -662,11 +713,10 @@ const App = () => {
               key={id}
               onClick={() => scrollToSection(id)}
               className={`group relative flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-300 
-              ${
-                activeSection === id
+              ${activeSection === id
                   ? "bg-blue-600 text-black"
                   : "bg-transparent text-blue-600 hover:bg-blue-100 hover:text-blue-700"
-              } 
+                } 
               scale-100 hover:scale-110 
               !bg-transparent !border-none shadow-none`}
             >
@@ -685,11 +735,9 @@ const App = () => {
 
 
 
-
-      {/* Hero Section */}
       <section
         id="about"
-  className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-20"
+        className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-20"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 scroll-fade"></div>
         <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
@@ -699,33 +747,35 @@ const App = () => {
         <div className="max-w-6xl mx-auto text-center relative z-10 scroll-fade">
           <div className="mb-8 animate-fade-in-up">
             <div className="w-42 h-42 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center animate-float shadow-2xl">
-              {/* <span className="text-4xl font-bold text-white">LW</span>
-               */}
-               <img src={me} alt="Leo Wei" className="w-full h-full object-cover rounded-full" />
+              <img src={me} alt="Leo Wei" className="w-full h-full object-cover rounded-full" />
             </div>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 animate-fade-in-up animation-delay-500">
               Leo Wei
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8 animate-fade-in-up animation-delay-1000">
               Passionate about creating things that make a
-              difference. 
+              difference.
             </p>
           </div>
           <div className="flex justify-center space-x-6 animate-fade-in-up animation-delay-1500">
             <a
-              href="#"
+              href="https://github.com/leowei31/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-4 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
             >
               <Github size={24} />
             </a>
             <a
-              href="#"
+              href="https://www.linkedin.com/in/leo-wei/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-4 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
             >
               <Linkedin size={24} />
             </a>
             <a
-              href="#"
+              href="mailto:hanzhe.wei@ucalgary.ca"
               className="p-4 bg-green-600 text-white rounded-full hover:bg-green-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
             >
               <Mail size={24} />
@@ -735,48 +785,48 @@ const App = () => {
       </section>
 
       {/* Experience Section */}
-        <section
-          id="experience"
-          className="snap-start py-20 px-6 bg-white md:pl-20 relative"
-        >
-          <div className="w-full scroll-fade">
-            <h2 className="text-4xl font-bold text-center mb-16 text-gray-900">
-          Experience
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {experiences.map((exp, index) => (
-            <Card key={index} className="p-6 h-full">
-              <div className="flex flex-col h-full">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
-              {exp.title}
-            </h3>
-            <p className="text-blue-600 font-semibold mb-2">
-              {exp.company}
-            </p>
-            <p className="text-gray-500 text-sm mb-4">{exp.period}</p>
-            <div className="text-gray-700 mb-4 flex-grow space-y-2">
-              {exp.description.map((line, lineIndex) => (
-                <div key={lineIndex}>{line}</div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {exp.technologies.map((tech, techIndex) => (
-                <span
-              key={techIndex}
-              className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
-                >
-              {tech}
-                </span>
-              ))}
-            </div>
-              </div>
-            </Card>
-          ))}
-            </div>
+      <section
+        id="experience"
+        className="snap-start py-20 px-6 bg-white md:pl-20 relative"
+      >
+        <div className="w-full scroll-fade">
+          <h2 className="text-4xl font-bold text-center mb-16 text-gray-900">
+            Experience
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {experiences.map((exp, index) => (
+              <Card key={index} className="p-6 h-full">
+                <div className="flex flex-col h-full">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {exp.title}
+                  </h3>
+                  <p className="text-blue-600 font-semibold mb-2">
+                    {exp.company}
+                  </p>
+                  <p className="text-gray-500 text-sm mb-4">{exp.period}</p>
+                  <div className="text-gray-700 mb-4 flex-grow space-y-2">
+                    {exp.description.map((line, lineIndex) => (
+                      <div key={lineIndex}>{line}</div>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {exp.technologies.map((tech, techIndex) => (
+                      <span
+                        key={techIndex}
+                        className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Projects Section */}
+      {/* Projects Section */}
       <section
         id="projects"
         className="snap-start py-20 px-6 md:pl-20 relative"
@@ -816,24 +866,24 @@ const App = () => {
                       ))}
                     </div>
                     <div className="flex space-x-4">
-                      {project.github? <a
+                      {project.github ? <a
                         href={project.github}
                         className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-all duration-300 transform hover:scale-105"
                       >
                         <Github size={18} />
                         <span>Code </span>
                       </a> : null}
-                    {project.demo ? (
-                      <a
-                        href={project.demo}
-                        className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-all duration-300 transform hover:scale-105"
-                      >
-                        <ExternalLink size={18} />
-                        <span>Demo</span>
-                      </a>
-                    ) : (
-                      <span className="text-gray-400 italic"></span>
-                    )}
+                      {project.demo ? (
+                        <a
+                          href={project.demo}
+                          className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-all duration-300 transform hover:scale-105"
+                        >
+                          <ExternalLink size={18} />
+                          <span>Demo</span>
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 italic"></span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -886,7 +936,7 @@ const App = () => {
 
 
 
-       {/* academics Section */}
+      {/* academics Section */}
       <section
         id="academics"
         className="snap-start py-20 px-6 md:pl-20 relative"
@@ -895,8 +945,8 @@ const App = () => {
           <h2 className="text-4xl font-bold text-center mb-16 text-black-900">
             Academics
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-            {extracurriculars.map((activity, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {academics.map((activity, index) => (
               <Card key={index} className="p-6 h-full">
                 <div className="flex flex-col h-full">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
@@ -906,15 +956,10 @@ const App = () => {
                     {activity.organization}
                   </p>
                   <p className="text-gray-700 mb-4 flex-grow">
-                    {activity.description}
+                    {activity.description.map((line, lineIndex) => (
+                      <div key={lineIndex}>{line}</div>
+                    ))}
                   </p>
-                  <div className="mt-auto">
-                    <div className="bg-green-50 border-l-4 border-green-400 p-3 rounded">
-                      <p className="text-green-700 font-medium text-sm">
-                        Impact: {activity.impact}
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </Card>
             ))}
