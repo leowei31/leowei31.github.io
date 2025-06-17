@@ -469,7 +469,7 @@ const App = () => {
     {
       title: "giraff ai",
       description:
-        "Full-stack e-commerce solution with real-time inventory management, payment processing, and admin dashboard.",
+        "Enterprise AI search engine that allows users to search through data via a graph and vector database. Achieves 90% accuracy in search results while using 10% of context compared to vector search. Interviewed by YCombinator.",
       technologies: ["Next.js", "FastAPI", "Langchain", "Neo4j", "Pinecone"],
       // github: "#",
       demo: "https://giraff.ai",
@@ -479,7 +479,7 @@ const App = () => {
     {
       title: "Stanford Treehacks",
       description:
-        "Real-time chat application with AI-powered responses, user authentication, and message encryption.",
+        "Real-time chat application with AI powered graph visualization. Users can chat with an LLM and visualize the conversation and LLM reasoning as a graph. Uses Intel Prediction Guard to ensure data privacy and security.",
       technologies: ["React", "Flask", "RAG", "Python", "Intel Prediction Guard", "Langchain"],
       github: "https://github.com/leowei31/Treehacks2024",
       demo: "https://devpost.com/software/llm2graph",
