@@ -13,6 +13,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@playwright/mcp": "^0.0.64",
     "@react-three/drei": "^10.1.2",
     "@react-three/fiber": "^9.1.2",
     "@tailwindcss/vite": "^4.1.8",

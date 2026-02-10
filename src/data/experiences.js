@@ -1,0 +1,57 @@
+export const experiences = [
+  {
+    title: "Lead Software Developer",
+    company: "Broadbill Energy",
+    period: "2025-Present",
+    description: [
+      "Led development of company's full-stack inventory management platform using Next.js, Node.js, and PostgreSQL. Executed zero-downtime migration of a 10GB legacy SQL database to PostgreSQL. Cut API latency by implementing caching layer and query deduplication. Built Excel automation with Typescript, reducing manual data entry time.",
+    ],
+    technologies: ["Next.js", "Node.js", "Azure", "PostgreSQL", "Redis", "Docker", "JavaScript", "TypeScript"],
+  },
+  {
+    title: "Machine Learning Researcher and Graduate Teaching Assistant",
+    company: "University of Calgary, Schulich School of Engineering",
+    period: "2023 - 2025",
+    description: [
+      "Developed a PEFT framework (soft prompts + quantization) for LLMs, achieving SOTA benchmark results. Led RLHF-tuned LLM medical summarization project and designed a federated learning system for hospital-scale time-series forecasting.",
+      "Teaching Assistant for undergraduate full stack web developement course, undergraduate capstone project course, and graduate course on advanced data structures and algorithms.",
+    ],
+    technologies: ["PyTorch", "Transformers", "Hugging Face", "Python"],
+  },
+  {
+    title: "Machine Learning Engineer",
+    company: "CyberX",
+    period: "2023 - 2023",
+    description: [
+      "Increased profitability of Uniswap V3 liquidity positions by using unsupervised learning techniques to optimize trading strategies. Built ETL pipeline for data extraction and transformation. Generated actionable market insights for over 100,000 users.",
+    ],
+    technologies: ["TensorFlow", "Scikit-Learn", "Python"],
+  },
+  {
+    title: "Software Engineer Intern",
+    company: "KPMG",
+    period: "2022 - 2022",
+    description: [
+      "Improved frontend test coverage. Improved performance of internal data analytics tool. Reduced API response time through query optimization and caching.",
+    ],
+    technologies: ["React", "Django", "MySQL", "JavaScript", "Python"],
+  },
+  {
+    title: "Machine Learning Researcher",
+    company: "University of British Columbia, Department of Mathematics",
+    period: "2020 - 2020",
+    description: [
+      "Developed simulation with OpenAI Gym for PID tuning in control systems. Optimized PID tuning with DDPG algorithm, reducing settling time.",
+    ],
+    technologies: ["OpenAI Gym", "NumPy", "Pytorch", "Python"],
+  },
+  {
+    title: "Engineering Intern",
+    company: "Discover Battery",
+    period: "2019-2020",
+    description: [
+      "Designed and produced bill of materials for battery pack manufacturing. Developed automated testing system for battery packs using Python and Arduino.",
+    ],
+    technologies: ["Solidworks", "Arduino", "Python"],
+  },
+];
