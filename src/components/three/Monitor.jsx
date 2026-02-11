@@ -14,6 +14,9 @@ const codeLines = [
   "# Click to see projects",
 ];
 
+const MONITOR_TEXT_SIZE = 0.057;
+const MONITOR_LINE_GAP = 0.069;
+
 const Monitor = ({ onClick }) => {
   const textRef = useRef();
   const scrollRef = useRef(0);
@@ -46,8 +49,8 @@ const Monitor = ({ onClick }) => {
           {codeLines.map((line, i) => (
             <Text
               key={i}
-              position={[-0.58, -i * 0.058 + 0.26, 0]}
-              fontSize={0.045}
+              position={[-0.58, -i * MONITOR_LINE_GAP + 0.28, 0]}
+              fontSize={MONITOR_TEXT_SIZE}
               color={
                 line.includes("#")
                   ? "#6a9955"

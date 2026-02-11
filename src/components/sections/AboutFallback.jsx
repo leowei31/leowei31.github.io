@@ -6,7 +6,7 @@ const AboutFallback = () => {
   return (
     <section
       id="about"
-      className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-20"
+      className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-16"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 scroll-fade"></div>
       <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>

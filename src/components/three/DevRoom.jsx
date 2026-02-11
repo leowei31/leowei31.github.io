@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Canvas } from "@react-three/fiber";
+import React, { useState, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, Sparkles } from "@react-three/drei";
 import RoomShell from "./RoomShell";
 import Desk from "./Desk";
@@ -13,24 +13,60 @@ import Plant from "./Plant";
 import RobotToy from "./RobotToy";
 import Avatar from "./Avatar";
 
+const MIN_AZIMUTH = -Math.PI / 3;
+const MAX_AZIMUTH = Math.PI / 3;
+const AUTO_SWEEP_SPEED = 0.35;
+
+const AutoCameraSweep = ({ controlsRef, enabledRef }) => {
+  const directionRef = useRef(-1);
+
+  useFrame((_, delta) => {
+    if (!enabledRef.current || !controlsRef.current) return;
+
+    const controls = controlsRef.current;
+    const current = controls.getAzimuthalAngle();
+    let next = current + directionRef.current * AUTO_SWEEP_SPEED * delta;
+
+    if (next <= MIN_AZIMUTH) {
+      next = MIN_AZIMUTH;
+      directionRef.current = 1;
+    } else if (next >= MAX_AZIMUTH) {
+      next = MAX_AZIMUTH;
+      directionRef.current = -1;
+    }
+
+    controls.setAzimuthalAngle(next);
+    controls.update();
+  });
+
+  return null;
+};
+
 const DevRoom = ({ onObjectClick, isVisible }) => {
   const [isNight, setIsNight] = useState(false);
   const [lampOn, setLampOn] = useState(true);
   const controlsRef = useRef();
+  const autoSweepEnabledRef = useRef(true);
 
   return (
     <Canvas
       shadows
       dpr={[1, 1.5]}
-      camera={{ position: [0, 3.5, 6], fov: 50 }}
+      camera={{ position: [0, 3.4, 7], fov: 55 }}
       frameloop={isVisible ? "always" : "demand"}
       gl={{ antialias: true, powerPreference: "high-performance" }}
       style={{ background: "transparent" }}
     >
+      <AutoCameraSweep
+        controlsRef={controlsRef}
+        enabledRef={autoSweepEnabledRef}
+      />
+
       <OrbitControls
         ref={controlsRef}
-        autoRotate
-        autoRotateSpeed={0.4}
+        // Keep camera orbit on the front hemisphere so it never goes behind the back wall.
+        minAzimuthAngle={MIN_AZIMUTH}
+        maxAzimuthAngle={MAX_AZIMUTH}
         maxPolarAngle={Math.PI / 2.2}
         minPolarAngle={Math.PI / 6}
         minDistance={3.5}
@@ -40,9 +76,7 @@ const DevRoom = ({ onObjectClick, isVisible }) => {
         enableDamping
         dampingFactor={0.05}
         onStart={() => {
-          if (controlsRef.current) {
-            controlsRef.current.autoRotate = false;
-          }
+          autoSweepEnabledRef.current = false;
         }}
       />
 

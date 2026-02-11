@@ -102,27 +102,6 @@ const AppContent = () => {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto overflow-x-hidden snap-y snap-mandatory box-border isolation-isolate">
-      <style jsx>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-        .scroll-fade {
-          view-timeline-name: --section;
-          view-timeline-axis: block;
-          animation-name: fade-in-up;
-          animation-timeline: --section;
-          animation-duration: 1s;
-          animation-fill-mode: both;
-          animation-range: entry 0% cover 40%;
-        }
-      `}</style>
-
       <NavSidebar activeSection={activeSection} onNavigate={scrollToSection} />
 
       <HeroScene onSectionNavigate={handleRoomInteraction} />
