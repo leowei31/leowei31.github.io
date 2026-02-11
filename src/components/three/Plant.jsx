@@ -22,7 +22,7 @@ const Plant = ({ onClick }) => {
   };
 
   return (
-    <RoomObject onClick={handleClick} label="Water Plant" baseY={1.08}>
+    <RoomObject onClick={handleClick} label="Water Plant" baseY={1.05} hoverLift={0}>
       <group position={[-1.1, 0.04, -0.45]} ref={groupRef} scale={[scale, scale, scale]}>
         {/* Pot */}
         <mesh castShadow>

@@ -10,7 +10,6 @@ export const AchievementProvider = ({ children }) => {
   const [interactedObjects, setInteractedObjects] = useState(new Set());
   const [visitedSections, setVisitedSections] = useState(new Set());
   const [plantClicks, setPlantClicks] = useState(0);
-  const [hoveredBooks, setHoveredBooks] = useState(new Set());
   const firstVisitTime = useRef(null);
   const toastTimeoutRef = useRef(null);
 
@@ -106,26 +105,11 @@ export const AchievementProvider = ({ children }) => {
     });
   }, [unlockAchievement]);
 
-  const trackBookHover = useCallback(
-    (bookName) => {
-      setHoveredBooks((prev) => {
-        const next = new Set(prev);
-        next.add(bookName);
-        if (next.size >= 10) {
-          unlockAchievement("bookworm");
-        }
-        return next;
-      });
-    },
-    [unlockAchievement]
-  );
-
   const resetProgress = useCallback(() => {
     setUnlockedIds([]);
     setInteractedObjects(new Set());
     setVisitedSections(new Set());
     setPlantClicks(0);
-    setHoveredBooks(new Set());
     firstVisitTime.current = null;
     clearAchievements();
   }, []);
@@ -142,7 +126,6 @@ export const AchievementProvider = ({ children }) => {
     trackObjectInteraction,
     trackSectionVisit,
     trackPlantClick,
-    trackBookHover,
     dismissToast,
     resetProgress,
     progress: (unlockedIds.length / Object.keys(ACHIEVEMENTS).length) * 100,

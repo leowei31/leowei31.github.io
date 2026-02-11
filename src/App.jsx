@@ -29,7 +29,6 @@ const AppContent = () => {
     trackObjectInteraction,
     trackSectionVisit,
     trackPlantClick,
-    trackBookHover,
   } = useAchievements();
 
   // Track section visits on scroll
@@ -60,9 +59,10 @@ const AppContent = () => {
     (objectId, extra) => {
       // Navigation objects
       const sectionMap = {
-        about: "about",
+        experience: "experience",
         projects: "projects",
         skills: "skills",
+        academics: "academics",
         extracurricular: "extracurricular",
       };
 
@@ -90,9 +90,6 @@ const AppContent = () => {
           trackObjectInteraction("plant");
           trackPlantClick();
           break;
-        case "bookHover":
-          if (extra) trackBookHover(extra);
-          break;
       }
     },
     [
@@ -100,7 +97,6 @@ const AppContent = () => {
       trackObjectInteraction,
       unlockAchievement,
       trackPlantClick,
-      trackBookHover,
     ]
   );
 

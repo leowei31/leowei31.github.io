@@ -9,7 +9,7 @@ const trophies = [
 
 const AwardShelf = ({ onClick }) => {
   return (
-    <RoomObject onClick={onClick} label="Activities" baseY={0} hoverLift={0}>
+    <RoomObject onClick={onClick} label="View Academics" baseY={0} hoverLift={0}>
       <group position={[3.2, -0.9, -2.7]}>
         {/* Shelf frame - back */}
         <mesh position={[0, 1.8, -0.15]} castShadow>

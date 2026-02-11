@@ -10,6 +10,8 @@ import WindowView from "./WindowView";
 import CoffeeMug from "./CoffeeMug";
 import DeskLamp from "./DeskLamp";
 import Plant from "./Plant";
+import RobotToy from "./RobotToy";
+import Avatar from "./Avatar";
 
 const DevRoom = ({ onObjectClick, isVisible }) => {
   const [isNight, setIsNight] = useState(false);
@@ -82,7 +84,7 @@ const DevRoom = ({ onObjectClick, isVisible }) => {
 
       {/* Furniture & Objects */}
       <group position={[0, 0, -0.5]}>
-        <Desk onNameClick={() => onObjectClick?.("about")} />
+        <Desk onNameClick={() => onObjectClick?.("experience")} />
         <Monitor onClick={() => onObjectClick?.("projects")} />
         <CoffeeMug onClick={() => onObjectClick?.("coffee")} />
         <DeskLamp
@@ -94,11 +96,10 @@ const DevRoom = ({ onObjectClick, isVisible }) => {
         />
         <Plant onClick={() => onObjectClick?.("plant")} />
       </group>
-      <Bookshelf
-        onClick={() => onObjectClick?.("skills")}
-        onBookHover={(bookName) => onObjectClick?.("bookHover", bookName)}
-      />
-      <AwardShelf onClick={() => onObjectClick?.("extracurricular")} />
+      <Avatar />
+      <RobotToy onClick={() => onObjectClick?.("extracurricular")} />
+      <Bookshelf onClick={() => onObjectClick?.("skills")} />
+      <AwardShelf onClick={() => onObjectClick?.("academics")} />
       <WindowView
         isNight={isNight}
         onToggle={() => {

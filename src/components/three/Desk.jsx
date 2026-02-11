@@ -29,23 +29,40 @@ const Desk = ({ onNameClick }) => {
 
 
 
-      {/* Name Plate */}
-      <RoomObject onClick={onNameClick} label="About Me" baseY={1.06}>
-        <mesh position={[1.15, 0, 0.55]}>
-          <boxGeometry args={[0.6, 0.04, 0.2]} />
-          <meshStandardMaterial color="#C0A060" metalness={0.6} roughness={0.3} />
-        </mesh>
-        <Text
-          position={[1.15, 0.03, 0.55]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.07}
-          color="#3a2a0a"
-          anchorX="center"
-          anchorY="middle"
-          font={undefined}
-        >
-          Leo Wei
-        </Text>
+      {/* Name Plate - desk tent style */}
+      <RoomObject onClick={onNameClick} label="View Experience" baseY={1.06}>
+        <group position={[1.15, 0, 0.55]}>
+          {/* Base */}
+          <mesh position={[0, 0, 0]} castShadow>
+            <boxGeometry args={[0.55, 0.015, 0.18]} />
+            <meshStandardMaterial color="#B8963E" metalness={0.7} roughness={0.25} />
+          </mesh>
+          {/* Front face - pivoted from bottom edge on base front */}
+          <group position={[0, 0.008, 0.08]} rotation={[-0.15, 0, 0]}>
+            <mesh position={[0, 0.065, 0]} castShadow>
+              <boxGeometry args={[0.5, 0.13, 0.008]} />
+              <meshStandardMaterial color="#C9A84C" metalness={0.65} roughness={0.3} />
+            </mesh>
+            {/* Name text on front face */}
+            <Text
+              position={[0, 0.065, 0.005]}
+              fontSize={0.045}
+              color="#3a2a0a"
+              anchorX="center"
+              anchorY="middle"
+              font={undefined}
+            >
+              Leo Wei
+            </Text>
+          </group>
+          {/* Back support - pivoted from top of front face, angling down to base back */}
+          <group position={[0, 0.137, 0.06]} rotation={[0.79, 0, 0]}>
+            <mesh position={[0, -0.092, 0]} castShadow>
+              <boxGeometry args={[0.5, 0.184, 0.006]} />
+              <meshStandardMaterial color="#A6882F" metalness={0.7} roughness={0.3} />
+            </mesh>
+          </group>
+        </group>
       </RoomObject>
 
       {/* Keyboard */}

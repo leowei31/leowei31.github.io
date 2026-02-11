@@ -6,7 +6,7 @@ import { skills } from "../../data/skills";
 const shelfColors = ["#3b82f6", "#8b5cf6", "#22c55e", "#f59e0b"];
 const shelfCaps = [6, 5, 4, 4];
 
-const Bookshelf = ({ onClick, onBookHover }) => {
+const Bookshelf = ({ onClick }) => {
   const bookGroups = useMemo(
     () =>
       skills.slice(0, 4).map((group, index) => ({
@@ -67,10 +67,6 @@ const Bookshelf = ({ onClick, onBookHover }) => {
                   return (
                     <group
                       key={bookIndex}
-                      onPointerOver={(e) => {
-                        e.stopPropagation();
-                        onBookHover?.(bookName);
-                      }}
                     >
                       <mesh
                         position={[xOffset, y + 0.02 + bookHeight / 2, 0]}

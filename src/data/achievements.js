@@ -41,13 +41,6 @@ export const ACHIEVEMENTS = {
     description: "Grew the desk plant to full size",
     points: 25,
   },
-  bookworm: {
-    id: "bookworm",
-    name: "Bookworm",
-    icon: "\ud83d\udcda",
-    description: "Hovered over 10 different skill books",
-    points: 20,
-  },
   deep_diver: {
     id: "deep_diver",
     name: "Deep Diver",
@@ -81,10 +74,11 @@ export const TOTAL_POINTS = Object.values(ACHIEVEMENTS).reduce(
 export const INTERACTIVE_OBJECTS = [
   "projects",
   "skills",
-  "extracurricular",
-  "about",
+  "academics",
+  "experience",
   "window",
   "lamp",
   "coffee",
   "plant",
+  "extracurricular",
 ];

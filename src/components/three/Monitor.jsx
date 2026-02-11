@@ -4,21 +4,14 @@ import { useFrame } from "@react-three/fiber";
 import RoomObject from "./RoomObject";
 
 const codeLines = [
-  "const portfolio = {",
-  '  name: "Leo Wei",',
-  '  role: "Software Developer",',
-  "  skills: [",
-  '    "React", "Python",',
-  '    "Machine Learning",',
-  '    "Three.js"',
-  "  ],",
-  "  passion: () => {",
-  '    return "Building things',
-  '     that matter";',
-  "  }",
-  "};",
+  "class Portfolio:",
+  '  name = "Leo Wei"',
+  '  role = "Software Engineer / ML Researcher"',
   "",
-  "// Click to see projects",
+  "  def passion(self):",
+  '    return "Building things that matter"',
+  "",
+  "# Click to see projects",
 ];
 
 const Monitor = ({ onClick }) => {
@@ -49,18 +42,18 @@ const Monitor = ({ onClick }) => {
         </mesh>
 
         {/* Code text on screen */}
-        <group ref={textRef} position={[0, 2.08, 0.04]}>
+        <group ref={textRef} position={[0, 2.5, 0.04]}>
           {codeLines.map((line, i) => (
             <Text
               key={i}
-              position={[-0.58, -i * 0.052 + 0.36, 0]}
-              fontSize={0.04}
+              position={[-0.58, -i * 0.058 + 0.26, 0]}
+              fontSize={0.045}
               color={
-                line.includes("//")
+                line.includes("#")
                   ? "#6a9955"
                   : line.includes('"')
                     ? "#ce9178"
-                    : line.includes("const") || line.includes("return")
+                    : line.includes("class") || line.includes("def") || line.includes("return") || line.includes("self")
                       ? "#569cd6"
                       : "#d4d4d4"
               }
@@ -74,8 +67,8 @@ const Monitor = ({ onClick }) => {
         </group>
 
         {/* Monitor Stand */}
-        <mesh position={[0, 1.45, 0]} castShadow>
-          <boxGeometry args={[0.1, 0.5, 0.08]} />
+        <mesh position={[0, 1.37, 0]} castShadow>
+          <boxGeometry args={[0.1, 0.36, 0.08]} />
           <meshStandardMaterial color="#2a2a3e" metalness={0.5} roughness={0.3} />
         </mesh>
 
