@@ -1,102 +1,108 @@
-import React, { useMemo } from "react";
-import { Text } from "@react-three/drei";
+import { useMemo } from "react";
+import { Color } from "three";
 import RoomObject from "./RoomObject";
+import { useCanvasTexture } from "./useCanvasTexture";
 import { skills } from "../../data/skills";
+import { ROOM } from "./layout";
 
-const shelfColors = ["#3b82f6", "#8b5cf6", "#22c55e", "#f59e0b"];
-const shelfCaps = [6, 5, 4, 4];
+const HUES = [0.6, 0.78, 0.38, 0.07]; // blue, violet, green, orange
+const WIDTH = 1.5;
+const DEPTH = 0.4;
+const HEIGHT = 3.7;
+const BOARD_YS = [0.12, 0.98, 1.84, 2.7, 3.56];
+const STEEL = "#1b1c20";
+
+const rand = (i) => {
+  const x = Math.sin(i * 91.7 + 17.3) * 43758.5453;
+  return x - Math.floor(x);
+};
+
+const Label = ({ text }) => {
+  const draw = useMemo(
+    () => (ctx, w, h) => {
+      ctx.fillStyle = "#17181c";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#f4f1ea";
+      ctx.font = '500 30px "JetBrains Mono", monospace';
+      ctx.textBaseline = "middle";
+      ctx.fillText(text.toUpperCase().replace("TECHNOLOGIES", "TECH").replace("DEVELOPMENT", "DEV"), 18, h / 2 + 2);
+    },
+    [text]
+  );
+  const { texture } = useCanvasTexture(512, 64, draw, ['500 20px "JetBrains Mono"']);
+  return (
+    <mesh position={[-0.2, 0, DEPTH / 2 + 0.003]}>
+      <planeGeometry args={[0.9, 0.1125]} />
+      <meshStandardMaterial map={texture} roughness={0.5} />
+    </mesh>
+  );
+};
 
 const Bookshelf = ({ onClick }) => {
-  const bookGroups = useMemo(
+  const shelves = useMemo(
     () =>
-      skills.slice(0, 4).map((group, index) => ({
-        color: shelfColors[index],
-        label: group.category,
-        books: group.items.slice(0, shelfCaps[index]),
-      })),
+      skills.slice(0, 4).map((group, s) => {
+        let cursor = -WIDTH / 2 + 0.1;
+        const books = [];
+        group.items.slice(0, 9).forEach((name, i) => {
+          const w = 0.07 + rand(s * 20 + i) * 0.05;
+          if (cursor + w > WIDTH / 2 - 0.08) return;
+          const h = 0.42 + rand(s * 30 + i + 5) * 0.28;
+          const color = new Color().setHSL(HUES[s], 0.55 + rand(i + s) * 0.2, 0.42 + rand(i * 3 + s) * 0.2);
+          books.push({ name, x: cursor + w / 2, w, h, color, tilt: 0 });
+          cursor += w + 0.012;
+        });
+        return { label: group.category, books };
+      }),
     []
   );
 
-  const bookSizes = useMemo(
-    () =>
-      bookGroups.map((group) =>
-        group.books.map((_, index) => {
-          const width = 0.06 + ((index * 13) % 4) * 0.0075;
-          const height = 0.26 + ((index * 17) % 5) * 0.03;
-          return { width, height };
-        })
-      ),
-    [bookGroups]
-  );
-
   return (
-    <RoomObject onClick={onClick} label="View Skills" baseY={0} hoverLift={0}>
-      <group position={[-3.2, -0.25, -2.7]}>
-        {/* Shelf frame - back */}
-        <mesh position={[0, 2, -0.2]} castShadow>
-          <boxGeometry args={[1.4, 3.5, 0.05]} />
-          <meshStandardMaterial color="#654321" roughness={0.7} />
-        </mesh>
-
-        {/* Shelf frame - sides */}
-        <mesh position={[-0.68, 2, 0]} castShadow>
-          <boxGeometry args={[0.05, 3.5, 0.4]} />
-          <meshStandardMaterial color="#5a3a1a" roughness={0.7} />
-        </mesh>
-        <mesh position={[0.68, 2, 0]} castShadow>
-          <boxGeometry args={[0.05, 3.5, 0.4]} />
-          <meshStandardMaterial color="#5a3a1a" roughness={0.7} />
-        </mesh>
-
-        {/* Shelves (4 levels) */}
-        {[0.5, 1.3, 2.1, 2.9].map((y, shelfIndex) => (
-          <group key={shelfIndex}>
-            {/* Shelf plank */}
-            <mesh position={[0, y, 0]}>
-              <boxGeometry args={[1.3, 0.04, 0.38]} />
-              <meshStandardMaterial color="#6b4226" roughness={0.6} />
-            </mesh>
-
-            {/* Books on this shelf */}
-            {bookGroups[shelfIndex] && (
-              <group>
-                {bookGroups[shelfIndex].books.map((bookName, bookIndex) => {
-                  const { width: bookWidth, height: bookHeight } =
-                    bookSizes[shelfIndex][bookIndex];
-                  const xOffset = -0.5 + bookIndex * 0.18;
-                  return (
-                    <group
-                      key={bookIndex}
-                    >
-                      <mesh
-                        position={[xOffset, y + 0.02 + bookHeight / 2, 0]}
-                        castShadow
-                      >
-                        <boxGeometry args={[bookWidth, bookHeight, 0.2]} />
-                        <meshStandardMaterial
-                          color={bookGroups[shelfIndex].color}
-                          roughness={0.8}
-                        />
-                      </mesh>
-                    </group>
-                  );
-                })}
-
-                {/* Category label */}
-                <Text
-                  position={[0, y + 0.45, 0.15]}
-                  fontSize={0.06}
-                  color="#fff"
-                  anchorX="center"
-                  anchorY="middle"
-                  font={undefined}
-                >
-                  {bookGroups[shelfIndex].label}
-                </Text>
-              </group>
-            )}
-          </group>
+    <RoomObject onClick={onClick} label="Skills" baseY={0} hoverLift={0} labelOffset={[0, HEIGHT / 2 + 0.2, 0.4]}>
+      <group position={[-3.3, 0, ROOM.backZ + DEPTH / 2]}>
+        {/* Steel uprights */}
+        {[-1, 1].map((s) => (
+          <mesh key={s} position={[s * (WIDTH / 2 - 0.02), HEIGHT / 2, 0]} castShadow>
+            <boxGeometry args={[0.04, HEIGHT, DEPTH]} />
+            <meshStandardMaterial color={STEEL} roughness={0.4} metalness={0.6} />
+          </mesh>
         ))}
+        {/* Back panel */}
+        <mesh position={[0, HEIGHT / 2, -DEPTH / 2 + 0.01]} receiveShadow>
+          <boxGeometry args={[WIDTH - 0.08, HEIGHT, 0.02]} />
+          <meshStandardMaterial color="#d9d2c4" roughness={0.9} />
+        </mesh>
+
+        {/* Boards */}
+        {BOARD_YS.map((y) => (
+          <mesh key={y} position={[0, y, 0]} castShadow receiveShadow>
+            <boxGeometry args={[WIDTH - 0.04, 0.04, DEPTH]} />
+            <meshStandardMaterial color="#c99a68" roughness={0.5} />
+          </mesh>
+        ))}
+
+        {/* Books + category plaques */}
+        {shelves.map((shelf, s) => {
+          const y = BOARD_YS[s] + 0.02;
+          return (
+            <group key={shelf.label}>
+              {shelf.books.map((b) => (
+                <mesh
+                  key={b.name}
+                  position={[b.x, y + b.h / 2, -0.02]}
+                  rotation={[0, 0, b.tilt]}
+                  castShadow
+                >
+                  <boxGeometry args={[b.w, b.h, DEPTH - 0.1]} />
+                  <meshStandardMaterial color={b.color} roughness={0.75} />
+                </mesh>
+              ))}
+              <group position={[0, BOARD_YS[s], 0]}>
+                <Label text={shelf.label} />
+              </group>
+            </group>
+          );
+        })}
       </group>
     </RoomObject>
   );

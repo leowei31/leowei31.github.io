@@ -1,15 +1,40 @@
-import React from "react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "../lib/scroll";
+import SplitReveal from "./motion/SplitReveal";
 
-const SectionHeader = ({ label, title }) => (
-  <div className="text-center mb-16">
-    <span className="text-xs font-semibold tracking-[0.2em] uppercase text-blue-500/80 mb-3 block">
-      {label}
-    </span>
-    <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
-      {title}
-    </h2>
-    <div className="section-line" />
-  </div>
-);
+/** Editorial section header: index + label rule on top, oversized serif title below. */
+const SectionHeader = ({ index, label, title, className = "" }) => {
+  const rule = useRef(null);
+
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.from(rule.current, {
+        scaleX: 0,
+        transformOrigin: "left center",
+        duration: 1.4,
+        ease: "expo.out",
+        scrollTrigger: { trigger: rule.current, start: "top 90%", once: true },
+      });
+    });
+  });
+
+  return (
+    <header className={`mb-14 md:mb-20 ${className}`}>
+      <div className="eyebrow mb-6 flex items-center gap-4">
+        <span className="text-accent">{index}</span>
+        <span ref={rule} className="h-px flex-1 bg-line" />
+        <span>{label}</span>
+      </div>
+      <SplitReveal
+        as="h2"
+        className="font-display text-[clamp(3.5rem,11vw,9.5rem)] leading-[0.92] text-fg"
+      >
+        {title}
+      </SplitReveal>
+    </header>
+  );
+};
 
 export default SectionHeader;

@@ -1,65 +1,161 @@
-import React from "react";
-import {
-  User,
-  Briefcase,
-  Code,
-  Trophy,
-  BookText,
-  ChartColumnIncreasing,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Menu, Moon, Sun, X } from "lucide-react";
+import { getLenis } from "../lib/scroll";
+import { useTheme } from "../context/ThemeContext";
 
 const navItems = [
-  { id: "about", label: "About", icon: User },
-  { id: "experience", label: "Experience", icon: Briefcase },
-  { id: "projects", label: "Projects", icon: Code },
-  { id: "extracurricular", label: "Activities", icon: Trophy },
-  { id: "academics", label: "Academics", icon: BookText },
-  { id: "skills", label: "Skills", icon: ChartColumnIncreasing },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "extracurricular", label: "Activities" },
+  { id: "academics", label: "Academics" },
+  { id: "skills", label: "Skills" },
 ];
 
-const NavSidebar = ({ activeSection, onNavigate }) => {
+const iconButton =
+  "relative flex h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elev/60 text-fg backdrop-blur-md transition-all duration-300 hover:border-fg";
+
+/**
+ * Floating top bar: brand, section pill and theme toggle.
+ * Hides while scrolling down through content, returns on scroll up.
+ */
+const NavSidebar = ({ activeSection, onNavigate, onToggleTheme }) => {
+  const { isNight } = useTheme();
+  const [hidden, setHidden] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const progressRef = useRef(null);
+
+  // Hide-on-scroll-down + scroll progress, driven by Lenis (falls back to native scroll)
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const update = (y, direction) => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
+      const pastHero = y > window.innerHeight * 4.4;
+      setHidden(pastHero && direction > 0);
+    };
+
+    const lenis = getLenis();
+    if (lenis) {
+      const onScroll = ({ scroll, direction }) => update(scroll, direction);
+      lenis.on("scroll", onScroll);
+      return () => lenis.off("scroll", onScroll);
+    }
+    const onScroll = () => {
+      update(window.scrollY, Math.sign(window.scrollY - lastY));
+      lastY = window.scrollY;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Lock scroll under the mobile menu
+  useEffect(() => {
+    if (!menuOpen) return;
+    getLenis()?.stop();
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      getLenis()?.start();
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  const go = (id) => {
+    setMenuOpen(false);
+    // Wait a frame so Lenis is running again before scrolling
+    requestAnimationFrame(() => onNavigate(id));
+  };
+
   return (
-    <nav className="fixed left-0 top-0 h-full w-16 bg-white/40 backdrop-blur-xl border-r border-white/30 z-50 hidden md:flex flex-col justify-center isolation-isolate">
-      <div className="flex flex-col space-y-2 px-2">
-        {navItems.map(({ id, label, icon: Icon }) => {
-          const isActive = activeSection === id;
-          return (
-            <button
-              key={id}
-              onClick={() => onNavigate(id)}
-              className="group relative flex items-center justify-center p-3 rounded-xl transition-all duration-300"
-            >
-              {/* Active indicator bar */}
-              <div
-                className={`absolute left-0 w-1 rounded-full bg-gradient-to-b from-blue-500 to-purple-500 transition-all duration-300 ${
-                  isActive ? "h-6 opacity-100" : "h-0 opacity-0"
-                }`}
-              />
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          hidden && !menuOpen ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
+        <div className="mx-auto flex max-w-[110rem] items-center justify-between px-4 py-4 md:px-8">
+          <button
+            type="button"
+            onClick={() => go("about")}
+            className="flex items-center gap-3 rounded-full border border-line bg-bg-elev/60 py-1.5 pl-1.5 pr-4 backdrop-blur-md transition-colors hover:border-fg"
+            aria-label="Back to top"
+          >
+            <img src="/me_logo.png" alt="" className="h-7 w-7 rounded-full object-cover" />
+            <span className="text-sm font-medium tracking-tight text-fg">Leo Wei</span>
+          </button>
 
-              <Icon
-                size={20}
-                className={`transition-all duration-300 ${
-                  isActive
-                    ? "text-blue-600 scale-110"
-                    : "text-gray-400 group-hover:text-blue-500 group-hover:scale-110"
+          <nav
+            aria-label="Sections"
+            className="hidden items-center gap-1 rounded-full border border-line bg-bg-elev/60 p-1 backdrop-blur-md md:flex"
+          >
+            {navItems.map(({ id, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => go(id)}
+                aria-current={activeSection === id ? "true" : undefined}
+                className={`rounded-full px-4 py-2 text-sm transition-colors duration-300 ${
+                  activeSection === id ? "bg-fg text-bg" : "text-muted hover:text-fg"
                 }`}
-              />
-
-              {/* Tooltip */}
-              <div className="nav-tooltip absolute left-full ml-3 px-2.5 py-1 bg-gray-900/90 text-white text-xs font-medium rounded-md whitespace-nowrap backdrop-blur-sm">
+              >
                 {label}
-              </div>
-            </button>
-          );
-        })}
-      </div>
+              </button>
+            ))}
+          </nav>
 
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-          <span className="text-white text-xs font-bold">LW</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              aria-label={isNight ? "Switch to day theme" : "Switch to night theme"}
+              className={iconButton}
+            >
+              {isNight ? <Sun size={17} /> : <Moon size={17} />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((o) => !o)}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              className={`${iconButton} md:hidden`}
+            >
+              {menuOpen ? <X size={17} /> : <Menu size={17} />}
+            </button>
+          </div>
         </div>
+
+        {/* Scroll progress */}
+        <div className="h-px w-full bg-transparent">
+          <div ref={progressRef} className="h-full origin-left bg-accent" style={{ transform: "scaleX(0)" }} />
+        </div>
+      </header>
+
+      {/* Mobile menu */}
+      <div
+        className={`fixed inset-0 z-40 flex flex-col justify-center bg-bg px-8 transition-all duration-500 md:hidden ${
+          menuOpen ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+        aria-hidden={!menuOpen}
+      >
+        <ul className="space-y-2">
+          {[{ id: "about", label: "Intro" }, ...navItems].map(({ id, label }, i) => (
+            <li key={id}>
+              <button
+                type="button"
+                onClick={() => go(id)}
+                className="font-display flex w-full items-baseline gap-4 text-left text-6xl text-fg"
+                style={{ transitionDelay: `${menuOpen ? i * 50 : 0}ms` }}
+              >
+                <span className="eyebrow">{String(i).padStart(2, "0")}</span>
+                {label}
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
-    </nav>
+    </>
   );
 };
 

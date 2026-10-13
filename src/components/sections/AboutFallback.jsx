@@ -1,57 +1,96 @@
-import React from "react";
-import { Github, Linkedin, Mail } from "lucide-react";
-import me from "../../assets/me.png";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { ArrowDown } from "lucide-react";
+import { gsap } from "../../lib/scroll";
+import { profile } from "../../data/profile";
+import me from "../../assets/me.webp";
+import SplitReveal from "../motion/SplitReveal";
+import SocialLinks from "../SocialLinks";
 
+const RING_TEXT = "SOFTWARE ENGINEER * ML RESEARCHER * BUILDER * ";
+
+/**
+ * Hero for devices that can't run the 3D room (no WebGL, very low-end, reduced motion).
+ * The portrait sits inside a ring of rotating type that speeds up as you scroll.
+ */
 const AboutFallback = () => {
+  const ref = useRef(null);
+  const portrait = useRef(null);
+  const ring = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(portrait.current, { scale: 0.8, opacity: 0, duration: 1.4, ease: "expo.out", delay: 0.1 });
+        gsap.to(ring.current, { rotation: 360, duration: 40, ease: "none", repeat: -1, transformOrigin: "50% 50%" });
+        gsap.to(ring.current, {
+          rotation: "+=180",
+          ease: "none",
+          scrollTrigger: { trigger: ref.current, start: "top top", end: "bottom top", scrub: true },
+        });
+        gsap.to(portrait.current, {
+          yPercent: 12,
+          ease: "none",
+          scrollTrigger: { trigger: ref.current, start: "top top", end: "bottom top", scrub: true },
+        });
+      });
+    },
+    { scope: ref }
+  );
+
   return (
     <section
       id="about"
-      className="relative h-screen snap-start sticky top-0 z-10 flex items-center justify-center px-6 md:pl-16"
+      ref={ref}
+      className="relative flex min-h-svh flex-col justify-end overflow-hidden px-6 pb-12 pt-28 md:px-12"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-amber-50 scroll-fade"></div>
-      <div className="absolute top-20 left-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-      <div className="absolute top-40 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
-      <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000"></div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 55% at 50% 30%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%)",
+        }}
+      />
 
-      <div className="max-w-6xl mx-auto text-center relative z-10 scroll-fade">
-        <div className="mb-8 animate-fade-in-up">
-          <div className="w-42 h-42 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center animate-float shadow-2xl">
-            <img
-              src={me}
-              alt="Leo Wei"
-              className="w-full h-full object-cover rounded-full"
-            />
+      <div className="relative mx-auto flex w-full max-w-[110rem] flex-1 items-center justify-center py-6">
+        <div ref={portrait} className="relative aspect-square w-[min(82vw,26rem)]">
+          <svg
+            ref={ring}
+            viewBox="0 0 200 200"
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full overflow-visible text-fg"
+          >
+            <defs>
+              <path id="ring-path" d="M100,100 m-88,0 a88,88 0 1,1 176,0 a88,88 0 1,1 -176,0" />
+            </defs>
+            <text className="fill-current font-mono" fontSize="9.5" textLength="548" lengthAdjust="spacing">
+              <textPath href="#ring-path">{RING_TEXT}</textPath>
+            </text>
+          </svg>
+          <div className="absolute inset-[11%] overflow-hidden rounded-full border border-line bg-bg-elev">
+            <img src={me} alt="Leo Wei" className="h-full w-full object-cover" />
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 animate-fade-in-up animation-delay-500">
-            Leo Wei
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8 animate-fade-in-up animation-delay-1000">
-            Passionate about creating things that make a difference.
-          </p>
         </div>
-        <div className="flex justify-center space-x-6 animate-fade-in-up animation-delay-1500">
-          <a
-            href="https://github.com/leowei31/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-4 bg-gray-900 text-white rounded-full hover:bg-gray-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
-          >
-            <Github size={24} />
-          </a>
-          <a
-            href="https://www.linkedin.com/in/leo-wei/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-4 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
-          >
-            <Linkedin size={24} />
-          </a>
-          <a
-            href="mailto:hanzhe.wei@ucalgary.ca"
-            className="p-4 bg-green-600 text-white rounded-full hover:bg-green-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg"
-          >
-            <Mail size={24} />
-          </a>
+      </div>
+
+      <div className="relative mx-auto w-full max-w-[110rem]">
+        <p className="eyebrow mb-4">{profile.role}</p>
+        <SplitReveal
+          as="h1"
+          immediate
+          delay={0.2}
+          className="font-display mb-6 text-[clamp(4.5rem,22vw,14rem)] leading-[0.85] text-fg"
+        >
+          {profile.name}
+        </SplitReveal>
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <p className="max-w-sm text-lg leading-snug text-muted">{profile.tagline}</p>
+          <div className="flex items-center gap-6">
+            <SocialLinks />
+            <ArrowDown size={20} className="animate-bounce text-muted" aria-hidden="true" />
+          </div>
         </div>
       </div>
     </section>

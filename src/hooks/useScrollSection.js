@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+import { scrollToTarget } from "../lib/scroll";
 
-const SECTIONS = [
+export const SECTIONS = [
   "about",
   "experience",
   "projects",
@@ -13,40 +14,37 @@ export const useScrollSection = () => {
   const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollPosition = window.scrollY + 200;
-          for (const section of SECTIONS) {
-            const element = document.getElementById(section);
-            if (element) {
-              const { offsetTop, offsetHeight } = element;
-              if (
-                scrollPosition >= offsetTop &&
-                scrollPosition < offsetTop + offsetHeight
-              ) {
-                setActiveSection((prev) =>
-                  prev !== section ? section : prev
-                );
-                break;
-              }
-            }
-          }
-          ticking = false;
+    // A section is "active" while it crosses the vertical middle of the viewport.
+    // IntersectionObserver is immune to the layout shifts caused by pinned sections.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
         });
-        ticking = true;
-      }
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
+
+    let frame = requestAnimationFrame(() => {
+      SECTIONS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = useCallback((sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+    if (sectionId === "about") {
+      scrollToTarget(0);
+      return;
     }
+    const el = document.getElementById(sectionId);
+    if (el) scrollToTarget(el);
   }, []);
 
   return { activeSection, scrollToSection, sections: SECTIONS };

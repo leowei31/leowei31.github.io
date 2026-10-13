@@ -1,99 +1,133 @@
-import React from "react";
-import { Building2, GraduationCap, FlaskConical, Wrench, MapPin } from "lucide-react";
+import { useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { MapPin } from "lucide-react";
+import { gsap, ScrollTrigger } from "../../lib/scroll";
 import SectionHeader from "../SectionHeader";
 import { experiences } from "../../data/experiences";
-import { useScrollReveal } from "../../hooks/useScrollReveal";
 
-const iconMap = {
-  building: Building2,
-  graduation: GraduationCap,
-  beaker: FlaskConical,
-  wrench: Wrench,
-};
+const pad = (n) => String(n).padStart(2, "0");
 
 const ExperienceSection = () => {
-  const revealRef = useScrollReveal(150);
+  const root = useRef(null);
+  const line = useRef(null);
+  const [active, setActive] = useState(0);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Timeline spine draws as you scroll through the list
+        gsap.fromTo(
+          line.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            transformOrigin: "top center",
+            scrollTrigger: { trigger: "[data-exp-list]", start: "top 60%", end: "bottom 60%", scrub: true },
+          }
+        );
+
+        gsap.utils.toArray("[data-exp-row]").forEach((row, i) => {
+          // Focus effect: rows glow when they cross the middle of the viewport, dim otherwise
+          gsap.fromTo(
+            row,
+            { opacity: 0.35 },
+            {
+              opacity: 1,
+              ease: "none",
+              scrollTrigger: { trigger: row, start: "top 80%", end: "top 45%", scrub: true },
+            }
+          );
+          ScrollTrigger.create({
+            trigger: row,
+            start: "top 55%",
+            end: "bottom 55%",
+            onToggle: (self) => self.isActive && setActive(i),
+          });
+          gsap.from(row.querySelectorAll("[data-exp-part]"), {
+            y: 30,
+            opacity: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            stagger: 0.08,
+            scrollTrigger: { trigger: row, start: "top 82%", once: true },
+          });
+        });
+      });
+    },
+    { scope: root }
+  );
 
   return (
-    <section
-      id="experience"
-      className="snap-start py-20 px-6 md:pl-16 relative bg-gradient-to-b from-slate-50/80 to-white"
-    >
-      <div className="w-full max-w-3xl mx-auto">
-        <SectionHeader label="Career" title="Experience" />
+    <section id="experience" ref={root} className="relative px-6 py-28 md:px-12 md:py-40">
+      <div className="mx-auto max-w-[110rem]">
+        <SectionHeader index="01" label="Career" title="Experience" />
 
-        {/* Timeline */}
-        <div className="relative pl-8 md:pl-10">
-          {/* Vertical line */}
-          <div className="absolute left-4 md:left-4 top-0 bottom-0 w-0.5 timeline-line" />
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2.1fr)] md:gap-20">
+          {/* Sticky ticker */}
+          <aside className="hidden md:block">
+            <div className="sticky top-32">
+              <p className="eyebrow mb-3">Now showing</p>
+              <p className="font-display text-[clamp(5rem,9vw,9rem)] leading-none text-fg">
+                {pad(active + 1)}
+                <span className="text-muted">/{pad(experiences.length)}</span>
+              </p>
+              <p className="mt-6 max-w-[18rem] text-balance text-lg leading-snug text-fg">
+                {experiences[active].company}
+              </p>
+              <p className="eyebrow mt-3">{experiences[active].period}</p>
+            </div>
+          </aside>
 
-          {experiences.map((exp, index) => {
-            const isCurrent = index === 0;
-            const Icon = iconMap[exp.icon] || Building2;
+          <div data-exp-list className="relative">
+            <div aria-hidden="true" className="absolute bottom-0 left-0 top-0 w-px bg-line md:-left-10">
+              <div ref={line} className="h-full w-full bg-accent" style={{ transform: "scaleY(0)" }} />
+            </div>
 
-            return (
-              <div
-                key={index}
-                ref={revealRef}
-                className="relative mb-8 last:mb-0"
-              >
-                {/* Timeline dot */}
-                <div
-                  className={`absolute -left-4 md:-left-6 top-6 -translate-x-1/2 z-10 w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 border-4 border-white shadow-md ${
-                    isCurrent ? "timeline-dot-active" : ""
-                  }`}
-                />
-
-                {/* Content card */}
-                <div className="ml-4 md:ml-6">
-                  <div className="bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-lg glass-glow transition-all duration-500 hover:-translate-y-1 hover:border-white/70 hover:bg-white/80">
-                    {/* Top row: period badge + icon */}
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="inline-block px-3 py-1 bg-blue-50/80 text-blue-600 text-xs font-semibold rounded-full border border-blue-100/50">
-                        {exp.period}
+            <ol className="space-y-16 pl-6 md:space-y-24 md:pl-0">
+              {experiences.map((exp, index) => (
+                <li key={`${exp.company}-${exp.period}`} data-exp-row className="relative">
+                  <span
+                    aria-hidden="true"
+                    className={`absolute -left-[1.85rem] top-2 h-2.5 w-2.5 rounded-full border-2 border-accent transition-colors duration-500 md:-left-[2.65rem] ${
+                      active === index ? "bg-accent" : "bg-bg"
+                    }`}
+                  />
+                  <p data-exp-part className="eyebrow mb-3">
+                    {exp.period}
+                  </p>
+                  <h3 data-exp-part className="font-display mb-2 text-[clamp(2rem,3.6vw,3.4rem)] leading-[1.02] text-fg">
+                    {exp.title}
+                  </h3>
+                  <div data-exp-part className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-1 text-muted">
+                    <span className="text-base text-fg">{exp.company}</span>
+                    {exp.location && (
+                      <span className="flex items-center gap-1 text-sm">
+                        <MapPin size={13} />
+                        {exp.location}
                       </span>
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-100/50 flex items-center justify-center">
-                        <Icon size={16} className="text-blue-500" />
-                      </div>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {exp.title}
-                    </h3>
-
-                    {/* Company + location */}
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
-                      <p className="text-blue-600 font-medium text-sm">
-                        {exp.company}
-                      </p>
-                      {exp.location && (
-                        <span className="flex items-center gap-1 text-gray-400 text-xs">
-                          <MapPin size={12} />
-                          {exp.location}
-                        </span>
-                      )}
-                    </div>
-
-                    <ul className="text-gray-600 text-sm mb-4 space-y-1.5 leading-relaxed list-disc list-outside pl-4">
-                      {exp.description.map((line, lineIndex) => (
-                        <li key={lineIndex}>{line}</li>
-                      ))}
-                    </ul>
-                    <div className="flex flex-wrap gap-1.5">
-                      {exp.technologies.map((tech, techIndex) => (
-                        <span
-                          key={techIndex}
-                          className="px-2.5 py-1 bg-white/50 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-full text-xs font-medium transition-colors hover:bg-blue-50 hover:border-blue-300"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
+                    )}
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                  <ul data-exp-part className="mb-6 max-w-2xl space-y-2.5 text-[0.95rem] leading-relaxed text-muted">
+                    {exp.description.map((line) => (
+                      <li key={line} className="flex gap-3">
+                        <span aria-hidden="true" className="mt-2.5 h-px w-4 shrink-0 bg-accent" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                  <div data-exp-part className="flex flex-wrap gap-2">
+                    {exp.technologies.map((tech) => (
+                      <span key={tech} className="chip">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>

@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import RoomObject from "./RoomObject";
 
-const RobotToy = ({ onClick }) => {
+const RobotToy = ({ onClick, position = [-2.0, 0, -0.8], scale = 1 }) => {
   const headRef = useRef();
   const leftArmRef = useRef();
   const rightArmRef = useRef();
@@ -39,8 +39,8 @@ const RobotToy = ({ onClick }) => {
   });
 
   return (
-    <RoomObject onClick={onClick} label="View Activities" baseY={0} hoverLift={0}>
-      <group position={[-2.0, 0, -0.8]}>
+    <RoomObject onClick={onClick} label="Activities" baseY={0} hoverLift={0} labelOffset={[position[0], 1.3 * scale, position[2]]}>
+      <group position={position} scale={scale}>
 
         {/* === TRACKED BASE === */}
         {/* Main chassis */}

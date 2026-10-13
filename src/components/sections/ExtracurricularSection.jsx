@@ -1,138 +1,80 @@
-import React, { useState } from "react";
-import { Users, Rocket, Wrench, Lightbulb } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "../../lib/scroll";
 import SectionHeader from "../SectionHeader";
+import CountUp from "../motion/CountUp";
 import { extracurriculars } from "../../data/extracurriculars";
-import { useScrollReveal } from "../../hooks/useScrollReveal";
 
-const iconMap = {
-  users: Users,
-  rocket: Rocket,
-  wrench: Wrench,
-  lightbulb: Lightbulb,
+const ACCENTS = {
+  blue: "#5b8cff",
+  orange: "#ff6b3d",
+  green: "#3ecf8e",
+  purple: "#a78bfa",
 };
 
-const accentMap = {
-  blue: {
-    gradient: "from-blue-500 to-cyan-400",
-    text: "text-blue-600",
-    border: "border-blue-200/50",
-    statBg: "from-blue-500/10 to-cyan-500/10",
-  },
-  orange: {
-    gradient: "from-orange-500 to-amber-400",
-    text: "text-orange-600",
-    border: "border-orange-200/50",
-    statBg: "from-orange-500/10 to-amber-500/10",
-  },
-  green: {
-    gradient: "from-emerald-500 to-teal-400",
-    text: "text-emerald-600",
-    border: "border-emerald-200/50",
-    statBg: "from-emerald-500/10 to-teal-500/10",
-  },
-  purple: {
-    gradient: "from-purple-500 to-pink-400",
-    text: "text-purple-600",
-    border: "border-purple-200/50",
-    statBg: "from-purple-500/10 to-pink-500/10",
-  },
-};
-
+/**
+ * Stacked cards: each one sticks near the top and the previous card recedes
+ * (scales down and dims) as the next slides over it.
+ */
 const ExtracurricularSection = () => {
-  const revealRef = useScrollReveal(120);
-  const [flippedIndex, setFlippedIndex] = useState(null);
+  const root = useRef(null);
 
-  const handleFlip = (index) => {
-    setFlippedIndex(flippedIndex === index ? null : index);
-  };
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const cards = gsap.utils.toArray("[data-stack-card]");
+        cards.forEach((card, i) => {
+          const next = cards[i + 1];
+          if (!next) return;
+          const scrollTrigger = { trigger: next, start: "top 85%", end: "top 18%", scrub: true };
+          gsap.to(card.firstElementChild, { scale: 0.92, ease: "none", scrollTrigger });
+          gsap.to(card.querySelector("[data-stack-dim]"), { opacity: 0.6, ease: "none", scrollTrigger });
+        });
+      });
+    },
+    { scope: root }
+  );
 
   return (
-    <section
-      id="extracurricular"
-      className="snap-start py-20 px-6 md:pl-16 relative bg-gradient-to-b from-blue-50/40 to-slate-50/80"
-    >
-      <div className="w-full">
-        <SectionHeader
-          label="Beyond Work"
-          title="Extracurricular Activities"
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
-          {extracurriculars.map((activity, index) => {
-            const accent = accentMap[activity.accent] || accentMap.blue;
-            const Icon = iconMap[activity.icon] || Users;
-            const isFlipped = flippedIndex === index;
+    <section id="extracurricular" ref={root} className="relative px-6 py-28 md:px-12 md:py-40">
+      <div className="mx-auto max-w-[110rem]">
+        <SectionHeader index="03" label="Beyond the classroom" title="Activities" />
 
+        <div>
+          {extracurriculars.map((item, i) => {
+            const color = ACCENTS[item.accent] ?? ACCENTS.orange;
             return (
-              <div key={index} ref={revealRef}>
-                <div
-                  className="flip-card cursor-pointer h-[320px]"
-                  onClick={() => handleFlip(index)}
-                >
+              <div
+                key={item.title}
+                data-stack-card
+                className="sticky mb-6 md:mb-10"
+                style={{ top: `calc(11vh + ${i * 18}px)` }}
+              >
+                <div className="relative origin-top rounded-[1.75rem] border border-line bg-bg-elev p-7 shadow-xl md:p-12">
                   <div
-                    className={`flip-card-inner ${isFlipped ? "flipped" : ""}`}
-                  >
-                    {/* ——— Front ——— */}
-                    <div className="flip-card-front">
-                      <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg h-full flex flex-col items-center justify-center p-6 text-center glass-glow">
-                        {/* Gradient top accent */}
-                        <div
-                          className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent.gradient}`}
-                        />
-
-                        {/* Icon */}
-                        <div
-                          className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${accent.gradient} flex items-center justify-center mb-5 shadow-lg`}
-                        >
-                          <Icon size={28} className="text-white" />
-                        </div>
-
-                        <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">
-                          {activity.title}
-                        </h3>
-                        <p className={`${accent.text} font-medium text-sm`}>
-                          {activity.organization}
-                        </p>
-
-                        <span className="mt-5 text-gray-400 text-[11px] tracking-wide uppercase">
-                          Hover for details
-                        </span>
+                    data-stack-dim
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 rounded-[inherit] bg-bg opacity-0"
+                  />
+                  <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] md:gap-16">
+                    <div>
+                      <p className="eyebrow mb-6">
+                        {String(i + 1).padStart(2, "0")} - {item.organization}
+                      </p>
+                      <div className="font-display text-[clamp(4.5rem,11vw,10rem)] leading-[0.9]" style={{ color }}>
+                        <CountUp value={item.stat} />
                       </div>
+                      <p className="eyebrow mt-3">{item.statLabel}</p>
                     </div>
-
-                    {/* ——— Back ——— */}
-                    <div className="flip-card-back">
-                      <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg h-full flex flex-col p-6">
-                        {/* Gradient top accent */}
-                        <div
-                          className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${accent.gradient}`}
-                        />
-
-                        {/* Stat highlight */}
-                        <div className="text-center mb-4">
-                          <span
-                            className={`text-3xl font-extrabold bg-gradient-to-r ${accent.gradient} bg-clip-text text-transparent`}
-                          >
-                            {activity.stat}
-                          </span>
-                          <p className="text-gray-500 text-xs mt-1">
-                            {activity.statLabel}
-                          </p>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-gray-600 text-sm leading-relaxed flex-grow">
-                          {activity.description}
-                        </p>
-
-                        {/* Impact callout */}
-                        <div
-                          className={`mt-3 bg-gradient-to-r ${accent.statBg} border ${accent.border} p-3 rounded-xl`}
-                        >
-                          <p className="text-gray-700 font-medium text-xs leading-relaxed">
-                            {activity.impact}
-                          </p>
-                        </div>
-                      </div>
+                    <div className="flex flex-col justify-end">
+                      <h3 className="font-display mb-5 text-[clamp(1.8rem,3vw,2.8rem)] leading-[1.05] text-fg">
+                        {item.title}
+                      </h3>
+                      <p className="mb-5 max-w-xl text-base leading-relaxed text-muted">{item.description}</p>
+                      <p className="max-w-xl border-l-2 pl-4 text-sm leading-relaxed text-fg" style={{ borderColor: color }}>
+                        {item.impact}
+                      </p>
                     </div>
                   </div>
                 </div>

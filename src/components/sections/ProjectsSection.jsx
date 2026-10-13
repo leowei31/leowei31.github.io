@@ -1,161 +1,178 @@
-import React from "react";
-import { Github, ExternalLink } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import { ArrowUpRight, Github } from "lucide-react";
+import { gsap } from "../../lib/scroll";
 import SectionHeader from "../SectionHeader";
 import { projects } from "../../data/projects";
-import { useScrollReveal } from "../../hooks/useScrollReveal";
 
+const pad = (n) => String(n).padStart(2, "0");
+
+const ProjectCard = ({ project, index }) => (
+  <article
+    data-project-card
+    className="group relative flex h-full w-full shrink-0 flex-col overflow-hidden rounded-[1.75rem] border border-line bg-bg-elev md:max-w-3xl motion-safe:md:w-[min(64vh,37.7rem)] motion-safe:md:min-w-[24rem] motion-safe:md:max-w-none"
+  >
+    <div className="relative aspect-[16/10] shrink-0 overflow-hidden">
+      <img
+        data-project-img
+        src={project.image}
+        alt={project.title}
+        loading="lazy"
+        className="absolute inset-y-0 -left-[8%] h-full w-[116%] max-w-none object-cover"
+      />
+      <span className="absolute left-4 top-4 rounded-full bg-bg/80 px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-fg backdrop-blur-md">
+        {project.category}
+      </span>
+      {index === 0 && (
+        <span className="absolute right-4 top-4 rounded-full bg-accent px-3 py-1 font-mono text-[11px] uppercase tracking-wider text-accent-fg">
+          Featured
+        </span>
+      )}
+    </div>
+
+    <div className="flex min-h-0 flex-1 flex-col p-6 md:p-7">
+      <div className="mb-3 flex items-start justify-between gap-4">
+        <h3 className="font-display text-[clamp(1.8rem,2.6vw,2.6rem)] leading-[1.05] text-fg">{project.title}</h3>
+        <span className="font-mono text-xs text-muted">{pad(index + 1)}</span>
+      </div>
+      <p className="mb-5 line-clamp-3 text-sm leading-relaxed text-muted">{project.description}</p>
+
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-4">
+        <div className="flex max-h-[4.2rem] min-w-0 flex-1 flex-wrap gap-1.5 overflow-hidden">
+          {project.technologies.slice(0, 4).map((tech) => (
+            <span key={tech} className="chip">
+              {tech}
+            </span>
+          ))}
+        </div>
+        <div className="flex shrink-0 gap-2">
+          {project.github && (
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.title} source code`}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-line text-fg transition-colors hover:bg-fg hover:text-bg"
+            >
+              <Github size={16} />
+            </a>
+          )}
+          {project.demo && (
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.title} live demo`}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-accent-fg transition-transform hover:scale-110"
+            >
+              <ArrowUpRight size={18} />
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </article>
+);
+
+/**
+ * Desktop: the section pins and vertical scroll drives a horizontal gallery, with the
+ * images parallaxing inside their frames. Mobile: a plain vertical stack.
+ */
 const ProjectsSection = () => {
-  const revealRef = useScrollReveal(100);
-  const [featured, ...rest] = projects;
+  const root = useRef(null);
+  const track = useRef(null);
+  const progress = useRef(null);
+  const counter = useRef(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        const distance = () => Math.max(0, track.current.scrollWidth - window.innerWidth);
+
+        const slide = gsap.to(track.current, {
+          x: () => -distance(),
+          ease: "none",
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: () => `+=${distance()}`,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              gsap.set(progress.current, { scaleX: self.progress });
+              const i = Math.min(projects.length, Math.round(self.progress * (projects.length - 1)) + 1);
+              counter.current.textContent = `${pad(i)} / ${pad(projects.length)}`;
+            },
+          },
+        });
+
+        gsap.utils.toArray("[data-project-card]").forEach((card) => {
+          gsap.fromTo(
+            card.querySelector("[data-project-img]"),
+            { xPercent: -5 },
+            {
+              xPercent: 5,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: slide,
+                start: "left right",
+                end: "right left",
+                scrub: true,
+              },
+            }
+          );
+        });
+      });
+
+      mm.add("(max-width: 767px), (prefers-reduced-motion: reduce)", () => {
+        gsap.utils.toArray("[data-project-card]").forEach((card) => {
+          gsap.from(card, {
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: card, start: "top 88%", once: true },
+          });
+        });
+      });
+    },
+    { scope: root }
+  );
 
   return (
-    <section
-      id="projects"
-      className="snap-start py-20 px-6 md:pl-16 relative bg-gradient-to-b from-white to-blue-50/40"
-    >
-      <div className="w-full">
-        <SectionHeader label="What I've Built" title="Projects" />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {/* Featured Project — spans 2 cols */}
-          <div ref={revealRef} className="md:col-span-2 group">
-            <div className="relative overflow-hidden rounded-2xl bg-white/60 backdrop-blur-xl border border-white/40 shadow-lg glass-glow h-full transition-all duration-500 hover:border-white/70 hover:bg-white/80">
-              <div className="flex flex-col md:flex-row h-full">
-                {/* Image side */}
-                <div className="relative md:w-3/5 overflow-hidden">
-                  <img
-                    src={featured.image}
-                    alt={featured.title}
-                    className="w-full h-full object-cover aspect-video md:aspect-auto min-h-[280px] transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/10 hidden md:block" />
-                  {/* Category badge */}
-                  <span className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-md text-white text-xs font-semibold rounded-full border border-white/30">
-                    {featured.category}
-                  </span>
-                </div>
-
-                {/* Content side */}
-                <div className="p-6 md:p-8 md:w-2/5 flex flex-col justify-center">
-                  <span className="inline-block w-fit px-2.5 py-0.5 mb-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-full">
-                    Featured
-                  </span>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {featured.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {featured.description}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {featured.technologies.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-2.5 py-1 bg-white/50 backdrop-blur-sm border border-blue-200/50 text-blue-700 rounded-full text-xs font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-3">
-                    {featured.github && (
-                      <a
-                        href={featured.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-gray-700 bg-gray-100 rounded-full hover:bg-gray-200 transition-all duration-300"
-                      >
-                        <Github size={14} />
-                        Code
-                      </a>
-                    )}
-                    {featured.demo && (
-                      <a
-                        href={featured.demo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300"
-                      >
-                        <ExternalLink size={14} />
-                        Live Demo
-                      </a>
-                    )}
-                  </div>
-                </div>
+    <section id="projects" ref={root} className="relative overflow-hidden py-28 motion-safe:md:h-screen motion-safe:md:py-0">
+      <div className="flex flex-col motion-safe:md:h-full motion-safe:md:justify-center">
+        <div ref={track} className="flex flex-col gap-6 px-6 motion-safe:md:h-[min(78vh,46rem)] motion-safe:md:flex-row motion-safe:md:items-stretch motion-safe:md:gap-8 md:px-12 motion-safe:md:pt-8">
+          {/* Intro panel */}
+          <div className="flex shrink-0 flex-col justify-between motion-safe:md:w-[min(34vw,32rem)]">
+            <SectionHeader index="02" label="What I've built" title="Projects" className="mb-8! motion-safe:md:mb-0!" />
+            <div className="hidden motion-safe:md:block">
+              <p className="mb-6 max-w-xs text-lg leading-snug text-muted">
+                Startups, hackathons, robots and research - keep scrolling.
+              </p>
+              <p ref={counter} className="font-mono text-sm text-fg">
+                01 / {pad(projects.length)}
+              </p>
+              <div className="mt-3 h-px w-48 bg-line">
+                <div
+                  ref={progress}
+                  className="h-full origin-left bg-accent"
+                  style={{ transform: "scaleX(0)" }}
+                />
               </div>
             </div>
           </div>
 
-          {/* Regular Project Cards */}
-          {rest.map((project, index) => (
-            <div key={index} ref={revealRef} className="group">
-              <div className="relative overflow-hidden rounded-2xl shadow-lg h-full cursor-default">
-                {/* Full-bleed image */}
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full aspect-[4/3] object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-
-                {/* Category badge — top left */}
-                <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/20 backdrop-blur-md text-white text-[11px] font-semibold rounded-full border border-white/30 z-10">
-                  {project.category}
-                </span>
-
-                {/* Action buttons — top right, hover reveal */}
-                <div className="absolute top-3 right-3 flex gap-2 z-10 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/40 transition-all duration-300"
-                    >
-                      <Github size={14} />
-                    </a>
-                  )}
-                  {project.demo && (
-                    <a
-                      href={project.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/40 transition-all duration-300"
-                    >
-                      <ExternalLink size={14} />
-                    </a>
-                  )}
-                </div>
-
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:via-black/40 transition-all duration-500" />
-
-                {/* Content overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-white font-bold text-lg leading-tight">
-                    {project.title}
-                  </h3>
-
-                  {/* Hover reveal — description + tech tags */}
-                  <div className="project-reveal">
-                    <div>
-                      <p className="text-white/80 text-sm mt-2 leading-relaxed line-clamp-3">
-                        {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mt-3">
-                        {project.technologies.map((tech, i) => (
-                          <span
-                            key={i}
-                            className="px-2 py-0.5 bg-white/15 backdrop-blur-sm border border-white/20 text-white/90 rounded-full text-[11px] font-medium"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {projects.map((project, index) => (
+            <ProjectCard key={project.title} project={project} index={index} />
           ))}
+
+          {/* Trailing spacer so the last card can settle with margin */}
+          <div aria-hidden="true" className="hidden w-[6vw] shrink-0 motion-safe:md:block" />
         </div>
       </div>
     </section>

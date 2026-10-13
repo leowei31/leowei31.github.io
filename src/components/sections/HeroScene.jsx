@@ -1,103 +1,184 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Github, Linkedin, Mail, ChevronDown, MousePointer } from "lucide-react";
-import DevRoom from "../three/DevRoom";
-import AboutFallback from "./AboutFallback";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
+import { ArrowRight } from "lucide-react";
+import { gsap, ScrollTrigger } from "../../lib/scroll";
 import { useDeviceCapability } from "../../hooks/useDeviceCapability";
-import ProgressBar from "../gamification/ProgressBar";
+import { useTheme } from "../../context/ThemeContext";
+import { profile, heroBeats } from "../../data/profile";
+import SplitReveal from "../motion/SplitReveal";
+import SocialLinks from "../SocialLinks";
+import AboutFallback from "./AboutFallback";
 
-const HeroScene = ({ onSectionNavigate }) => {
-  const { canRender3D } = useDeviceCapability();
+// three.js is large - keep it out of the initial bundle so the headline paints immediately
+const DevRoom = lazy(() => import("../three/DevRoom"));
+
+const PIN_LENGTH = () => (window.innerWidth < 768 ? "+=420%" : "+=320%");
+const smoothWindow = (p, [from, to], fade = 0.04) => {
+  if (p <= from - fade || p >= to + fade) return 0;
+  if (p < from) return (p - (from - fade)) / fade;
+  if (p > to) return 1 - (p - to) / fade;
+  return 1;
+};
+
+const HeroScene = ({ onObjectClick, onNavigate }) => {
+  const { canRender3D, quality } = useDeviceCapability();
+  const { isNight } = useTheme();
   const [isVisible, setIsVisible] = useState(true);
   const [hasInteracted, setHasInteracted] = useState(false);
   const sectionRef = useRef(null);
+  const progressRef = useRef(0);
+  const introRef = useRef(null);
+  const beatRefs = useRef([]);
+  const barRef = useRef(null);
+  const scrimRef = useRef(null);
 
-  // IntersectionObserver to pause rendering when off-screen
+  // Pause rendering while the hero is off-screen
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsVisible(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
+    if (!canRender3D || !sectionRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), {
+      threshold: 0,
+    });
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [canRender3D]);
+
+  // Pin the hero and map scroll progress to camera + captions
+  useGSAP(
+    () => {
+      if (!canRender3D) return;
+
+      const render = (p) => {
+        progressRef.current = p;
+        gsap.set(introRef.current, {
+          opacity: smoothWindow(p, [0, 0.06], 0.05),
+          y: -p * 140,
+          pointerEvents: p < 0.08 ? "auto" : "none",
+        });
+        beatRefs.current.forEach((el, i) => {
+          if (!el) return;
+          const o = smoothWindow(p, heroBeats[i].range);
+          gsap.set(el, { autoAlpha: o, y: (1 - o) * 24, pointerEvents: o > 0.5 ? "auto" : "none" });
+        });
+        gsap.set(scrimRef.current, { opacity: smoothWindow(p, [0, 0.06], 0.05) * 0.85 });
+        gsap.set(barRef.current, { scaleY: p });
+      };
+      render(0);
+
+      const trigger = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: () => PIN_LENGTH(),
+        invalidateOnRefresh: true,
+        pin: true,
+        scrub: true,
+        onUpdate: (self) => render(self.progress),
+        onRefresh: (self) => render(self.progress),
+      });
+      return () => trigger.kill();
+    },
+    { scope: sectionRef, dependencies: [canRender3D] }
+  );
 
   const handleObjectClick = (objectId, extra) => {
     setHasInteracted(true);
-    onSectionNavigate?.(objectId, extra);
+    onObjectClick?.(objectId, extra);
   };
 
-  if (!canRender3D) {
-    return <AboutFallback />;
-  }
+  if (!canRender3D) return <AboutFallback />;
 
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative h-screen snap-start z-10"
-    >
-      {/* 3D Canvas - full screen */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-100 to-blue-100">
-        <DevRoom onObjectClick={handleObjectClick} isVisible={isVisible} />
+    <section id="about" ref={sectionRef} className="relative h-svh w-full overflow-hidden">
+      {/* Backdrop glow so the room sits in a soft pool of light */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 45%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%)",
+        }}
+      />
+
+      <div className="absolute inset-0">
+        <Suspense
+          fallback={
+            <div className="flex h-full items-center justify-center">
+              <span className="eyebrow animate-pulse">Building the room...</span>
+            </div>
+          }
+        >
+          <DevRoom
+            onObjectClick={handleObjectClick}
+            isVisible={isVisible}
+            isNight={isNight}
+            progressRef={progressRef}
+            quality={quality}
+          />
+        </Suspense>
       </div>
 
-      {/* Overlay UI */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
-        <div className="text-center pb-8 md:pb-12">
-          {/* Name and tagline */}
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-2 drop-shadow-sm">
-            Leo Wei
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-6 drop-shadow-sm">
-            Passionate about creating things that make a difference.
-          </p>
+      {/* Legibility scrim for text at the bottom */}
+      <div
+        ref={scrimRef}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5"
+        style={{ background: "linear-gradient(to top, var(--bg) 0%, transparent 100%)" }}
+      />
 
-          {/* Social links */}
-          <div className="flex justify-center space-x-4 mb-6 pointer-events-auto">
-            <a
-              href="https://github.com/leowei31/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-gray-900/80 text-white rounded-full hover:bg-gray-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg backdrop-blur-sm"
+      {/* Beat 0: introduction */}
+      <div ref={introRef} className="pointer-events-none absolute inset-x-0 bottom-0 px-6 pb-10 md:px-12 md:pb-14">
+        <div className="mx-auto flex max-w-[110rem] flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="eyebrow mb-4">{profile.role}</p>
+            <SplitReveal
+              as="h1"
+              immediate
+              delay={0.2}
+              className="font-display text-[clamp(4.5rem,11vw,11rem)] leading-[0.85] text-fg"
             >
-              <Github size={20} />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/leo-wei/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-blue-600/80 text-white rounded-full hover:bg-blue-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg backdrop-blur-sm"
-            >
-              <Linkedin size={20} />
-            </a>
-            <a
-              href="mailto:hanzhe.wei@ucalgary.ca"
-              className="p-3 bg-green-600/80 text-white rounded-full hover:bg-green-700 transition-all duration-300 transform hover:scale-110 hover:shadow-lg backdrop-blur-sm"
-            >
-              <Mail size={20} />
-            </a>
+              {profile.name}
+            </SplitReveal>
           </div>
-
-          {/* Scroll indicator */}
-          <div className="animate-bounce">
-            <ChevronDown className="mx-auto text-gray-400" size={28} />
+          <div className="pointer-events-auto max-w-sm md:pb-3">
+            <p className="mb-6 text-lg leading-snug text-muted">{profile.tagline}</p>
+            <SocialLinks />
           </div>
         </div>
       </div>
 
-      {/* Achievement progress bar */}
-      <ProgressBar />
-
-      {/* Explore prompt - fades after first interaction */}
-      {!hasInteracted && (
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none transition-opacity duration-1000">
-          <div className="flex items-center gap-2 bg-black/60 text-white px-4 py-2 rounded-full text-sm backdrop-blur-sm">
-            <MousePointer size={16} />
-            <span>Click & drag to explore the room</span>
+      {/* Narration beats, one per camera stop */}
+      {heroBeats.map((beat, i) => (
+        <div
+          key={beat.eyebrow}
+          ref={(el) => (beatRefs.current[i] = el)}
+          className={`absolute inset-x-4 bottom-5 z-10 opacity-0 md:inset-x-auto md:bottom-16 md:w-full md:max-w-md ${
+            beat.side === "left" ? "md:left-12" : "md:right-12"
+          }`}
+        >
+          <div className="rounded-3xl border border-line bg-bg-elev/80 p-5 shadow-2xl backdrop-blur-xl md:bg-bg-elev/70 md:p-8">
+            <p className="eyebrow mb-3 text-accent md:mb-4">{beat.eyebrow}</p>
+            <h2 className="font-display mb-3 text-[clamp(1.85rem,3.4vw,3.2rem)] leading-[1.02] text-fg md:mb-4">
+              {beat.title}
+            </h2>
+            <p className="mb-5 text-sm leading-relaxed text-muted md:mb-6">{beat.body}</p>
+            <button
+              type="button"
+              onClick={() => onNavigate?.(beat.cta.target)}
+              className="group inline-flex items-center gap-2 rounded-full bg-fg px-5 py-2.5 text-sm font-medium text-bg transition-transform hover:scale-[1.03]"
+            >
+              {beat.cta.label}
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+            </button>
           </div>
         </div>
-      )}
+      ))}
+
+      {/* Scroll cue + progress rail */}
+      <div className="pointer-events-none absolute right-5 top-1/2 hidden -translate-y-1/2 flex-col items-center gap-3 md:flex">
+        <span className="eyebrow [writing-mode:vertical-rl]">{hasInteracted ? "Keep scrolling" : "Scroll"}</span>
+        <div className="relative h-24 w-px bg-line">
+          <div ref={barRef} className="absolute inset-0 origin-top bg-accent" style={{ transform: "scaleY(0)" }} />
+        </div>
+      </div>
     </section>
   );
 };

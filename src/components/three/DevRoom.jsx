@@ -1,9 +1,19 @@
-import React, { useState, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows, Sparkles } from "@react-three/drei";
+import { useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { ContactShadows, PerformanceMonitor, Sparkles } from "@react-three/drei";
+import { EffectComposer, Bloom, ToneMapping } from "@react-three/postprocessing";
+import { ACESFilmicToneMapping } from "three";
+import { ToneMappingMode } from "postprocessing";
+import { CelSetup } from "./cel";
+import Outlines from "./Outlines";
+import { NightContext } from "./night";
+import { DESK, ROOM } from "./layout";
+import LightRig from "./LightRig";
+import CameraRig from "./CameraRig";
 import RoomShell from "./RoomShell";
 import Desk from "./Desk";
 import Monitor from "./Monitor";
+import Chair from "./Chair";
 import Bookshelf from "./Bookshelf";
 import AwardShelf from "./AwardShelf";
 import WindowView from "./WindowView";
@@ -12,114 +22,61 @@ import DeskLamp from "./DeskLamp";
 import Plant from "./Plant";
 import RobotToy from "./RobotToy";
 import Avatar from "./Avatar";
+import {
+  DrawerUnit,
+  FloorPlant,
+  Headphones,
+  PortraitFrame,
+  Poster,
+  Speaker,
+  StringLights,
+  WallClock,
+} from "./Decor";
 
-const MIN_AZIMUTH = -Math.PI / 3;
-const MAX_AZIMUTH = Math.PI / 3;
-const AUTO_SWEEP_SPEED = 0.35;
-
-const AutoCameraSweep = ({ controlsRef, enabledRef }) => {
-  const directionRef = useRef(-1);
-
-  useFrame((_, delta) => {
-    if (!enabledRef.current || !controlsRef.current) return;
-
-    const controls = controlsRef.current;
-    const current = controls.getAzimuthalAngle();
-    let next = current + directionRef.current * AUTO_SWEEP_SPEED * delta;
-
-    if (next <= MIN_AZIMUTH) {
-      next = MIN_AZIMUTH;
-      directionRef.current = 1;
-    } else if (next >= MAX_AZIMUTH) {
-      next = MAX_AZIMUTH;
-      directionRef.current = -1;
-    }
-
-    controls.setAzimuthalAngle(next);
-    controls.update();
-  });
-
-  return null;
-};
-
-const DevRoom = ({ onObjectClick, isVisible }) => {
-  const [isNight, setIsNight] = useState(false);
+/**
+ * The hero scene. The camera is driven by `progressRef` (hero scroll progress),
+ * lighting follows `isNight` (the site-wide theme), and objects report clicks upward.
+ * `quality` ("high" | "low") trims shadow resolution and pixel ratio for touch devices, and a
+ * PerformanceMonitor drops post-processing if the frame rate sags.
+ */
+const DevRoom = ({ onObjectClick, isVisible, isNight, progressRef, quality = "high" }) => {
   const [lampOn, setLampOn] = useState(true);
-  const controlsRef = useRef();
-  const autoSweepEnabledRef = useRef(true);
+  const [degraded, setDegraded] = useState(false);
+  const nightRef = useRef(isNight ? 1 : 0);
+  const low = quality === "low";
+  const backZ = ROOM.backZ + 0.03;
 
   return (
     <Canvas
       shadows
-      dpr={[1, 1.5]}
-      camera={{ position: [0, 3.4, 7], fov: 55 }}
-      frameloop={isVisible ? "always" : "demand"}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
-      style={{ background: "transparent" }}
+      dpr={degraded ? 1 : low ? [1, 1.5] : [1, 1.75]}
+      camera={{ position: [0, 4.6, 9.6], fov: 38, near: 0.1, far: 80 }}
+      frameloop={isVisible ? "always" : "never"}
+      gl={{ antialias: degraded || low, powerPreference: "high-performance", toneMapping: ACESFilmicToneMapping, alpha: true }}
+      style={{ background: "transparent", touchAction: "pan-y" }}
     >
-      <AutoCameraSweep
-        controlsRef={controlsRef}
-        enabledRef={autoSweepEnabledRef}
-      />
+      <CelSetup />
+      <PerformanceMonitor onDecline={() => setDegraded(true)} />
+      <NightContext.Provider value={nightRef}>
+        <CameraRig progressRef={progressRef} />
+        <LightRig isNight={isNight} shadowSize={low ? 1024 : 2048} />
 
-      <OrbitControls
-        ref={controlsRef}
-        // Keep camera orbit on the front hemisphere so it never goes behind the back wall.
-        minAzimuthAngle={MIN_AZIMUTH}
-        maxAzimuthAngle={MAX_AZIMUTH}
-        maxPolarAngle={Math.PI / 2.2}
-        minPolarAngle={Math.PI / 6}
-        minDistance={3.5}
-        maxDistance={8}
-        enablePan={false}
-        enableZoom={false}
-        enableDamping
-        dampingFactor={0.05}
-        onStart={() => {
-          autoSweepEnabledRef.current = false;
-        }}
-      />
+        <Outlines enabled={!degraded} pixels={1.4} />
+        <RoomShell />
+        <StringLights />
+        <WallClock position={[-2.15, 3.6, backZ]} />
+        <PortraitFrame position={[-2.15, 2.62, backZ]} />
+        <Poster kind="rocket" position={[-ROOM.width / 2 + 0.03, 2.7, -1.5]} facing={1} />
+        <Poster kind="chart" position={[-ROOM.width / 2 + 0.03, 2.7, -0.2]} facing={1} />
+        <Poster kind="network" position={[ROOM.width / 2 - 0.03, 2.7, -1.2]} facing={-1} />
 
-      {/* Lighting */}
-      <ambientLight intensity={isNight ? 0.12 : 0.25} />
-      <directionalLight
-        position={[4, 6, 4]}
-        intensity={isNight ? 0.18 : 0.4}
-        color={isNight ? "#6b7a8f" : "#f2b16a"}
-        castShadow
-        shadow-mapSize={[1024, 1024]}
-      />
-      <pointLight
-        position={[-2, 3, 0]}
-        intensity={isNight ? 0.08 : 0.22}
-        color={isNight ? "#a9b7c6" : "#ffd2a6"}
-      />
-
-      <Environment preset="sunset" />
-      <ContactShadows
-        position={[0, 0.01, 0]}
-        opacity={0.4}
-        blur={2}
-        far={4}
-      />
-
-      {/* Ambient dust particles */}
-      <Sparkles
-        count={30}
-        size={1.5}
-        scale={[6, 4, 5]}
-        position={[0, 2, 0]}
-        speed={0.3}
-        opacity={0.2}
-      />
-
-      {/* Room */}
-      <RoomShell />
-
-      {/* Furniture & Objects */}
-      <group position={[0, 0, -0.5]}>
         <Desk onNameClick={() => onObjectClick?.("experience")} />
-        <Monitor onClick={() => onObjectClick?.("projects")} />
+        <DrawerUnit />
+        <Monitor onClick={() => onObjectClick?.("projects")} lowPower={low} />
+        <Speaker position={[-1.12, DESK.top, DESK.z - 0.35]} />
+        <Speaker position={[1.12, DESK.top, DESK.z - 0.35]} />
+        <Headphones position={[0.62, DESK.top, DESK.z - 0.3]} />
+        <Chair position={[-0.75, 0, -1.35]} rotation={[0, 0.5, 0]} />
         <CoffeeMug onClick={() => onObjectClick?.("coffee")} />
         <DeskLamp
           isOn={lampOn}
@@ -129,18 +86,31 @@ const DevRoom = ({ onObjectClick, isVisible }) => {
           }}
         />
         <Plant onClick={() => onObjectClick?.("plant")} />
-      </group>
-      <Avatar />
-      <RobotToy onClick={() => onObjectClick?.("extracurricular")} />
-      <Bookshelf onClick={() => onObjectClick?.("skills")} />
-      <AwardShelf onClick={() => onObjectClick?.("academics")} />
-      <WindowView
-        isNight={isNight}
-        onToggle={() => {
-          setIsNight((prev) => !prev);
-          onObjectClick?.("window");
-        }}
-      />
+        <Bookshelf onClick={() => onObjectClick?.("skills")} />
+        <AwardShelf onClick={() => onObjectClick?.("academics")} />
+        <WindowView isNight={isNight} onToggle={() => onObjectClick?.("window")} />
+        <RobotToy onClick={() => onObjectClick?.("extracurricular")} position={[-2.1, 0, -0.5]} scale={1.15} />
+        <Avatar position={[2.3, 0, -0.7]} scale={1.08} lowDetail={low} faceCamera />
+        <FloorPlant position={[ROOM.width / 2 - 0.5, 0, -2.6]} />
+
+        <ContactShadows
+          position={[0, 0.03, -0.4]}
+          scale={[ROOM.width, 5.7]}
+          opacity={0.45}
+          blur={2.4}
+          far={3}
+          frames={1}
+          resolution={low ? 512 : 1024}
+        />
+        <Sparkles count={low ? 18 : 40} size={2} scale={[8, 4, 5]} position={[0, 2.5, -0.5]} speed={0.25} opacity={0.25} />
+
+        {!degraded && (
+          <EffectComposer multisampling={4} disableNormalPass>
+            <Bloom mipmapBlur luminanceThreshold={1} luminanceSmoothing={0.2} intensity={0.55} />
+            <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+          </EffectComposer>
+        )}
+      </NightContext.Provider>
     </Canvas>
   );
 };

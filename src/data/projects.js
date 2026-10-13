@@ -1,12 +1,11 @@
-import giraff_ai from '../assets/giraff_ai_frontend_demo.gif';
-import techstart from '../assets/techstart.gif';
+import giraff_ai from '../assets/giraff_ai_frontend_demo.webp';
+import techstart from '../assets/techstart.webp';
 import stanford from '../assets/stanford.jpg';
 import canis from '../assets/canis.png';
 import drone from '../assets/drone.JPG';
 import nectarfy from '../assets/nectarfy.JPG';
-import rl from '../assets/rl.JPG';
 import htn from '../assets/htn.png';
-import healthcare_sensor from '../assets/healthcare_sensor.gif';
+import healthcare_sensor from '../assets/healthcare_sensor.webp';
 
 export const projects = [
   {
@@ -53,7 +52,7 @@ export const projects = [
     category: "IoT",
     description:
       "Nectarfy is an app that allows beekeepers to connect to their smarthives through Bluetooth, and brings beekeepers together in a community. It provides real-time hive monitoring, data visualization, and community features.",
-    technologies: ["Flutter", "Firebase", "Express.js", "Blutooth Low Energy", "Arduino"],
+    technologies: ["Flutter", "Firebase", "Express.js", "Bluetooth Low Energy", "Arduino"],
     github: "https://github.com/leowei31/nectarfy-app",
     image: nectarfy,
   },

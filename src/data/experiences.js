@@ -1,15 +1,22 @@
 export const experiences = [
   {
+    title: "Engineering Lead, AI",
+    company: "Citizen Relations",
+    location: "Toronto, ON",
+    period: "2026-Present",
+    description: [
+      "Leading agentic workflow and internal platforms engineering efforts",
+    ],
+    technologies:  ["Next.js", "Node.js", "GCP", "PostgreSQL", "Docker", "JavaScript", "TypeScript", "SQL", "Python"],
+  },
+  {
     title: "Lead Software Developer",
     company: "Broadbill Energy",
     location: "Calgary, AB",
-    icon: "building",
-    period: "2025-Present",
+    period: "2025-2026",
     description: [
-      "Led development of company's full-stack inventory management and invoicing platform using Next.js, Node.js, and PostgreSQL",
-      "Executed zero-downtime migration of a 10GB legacy SQL database to PostgreSQL",
-      "Cut API latency by implementing caching layer and query optimizations",
-      "Built Excel automation with Typescript, reducing manual data entry time",
+      "Led development of internal full-stack inventory management and invoicing platform",
+      "Built workflow automation with Typescript, reducing manual data entry time",
     ],
     technologies: ["Next.js", "Node.js", "Azure", "PostgreSQL", "Redis", "Docker", "JavaScript", "TypeScript", "SQL"],
   },
@@ -17,7 +24,6 @@ export const experiences = [
     title: "Backend Engineer Contractor",
     company: "YC Backed Startup",
     location: "Remote",
-    icon: "code",
     period: "2025-2025",
     description: [
       "Migrated infra from AWS to GCP using Terraform",
@@ -29,12 +35,9 @@ export const experiences = [
     title: "Machine Learning Researcher and Graduate Teaching Assistant",
     company: "University of Calgary, Schulich School of Engineering",
     location: "Calgary, AB",
-    icon: "graduation",
     period: "2023 - 2025",
     description: [
-      "Developed a PEFT framework (soft prompts + quantization) for LLMs, achieving SOTA benchmark results",
-      "Led RLHF-tuned LLM medical summarization project",
-      "Designed a federated learning system for hospital-scale time-series forecasting",
+      "Research in the areas of LLMs, federated learning, achieved SOTA benchmark results",
       "Teaching Assistant for undergraduate full stack web development course, undergraduate capstone project course, and graduate course on advanced data structures and algorithms",
     ],
     technologies: ["PyTorch", "Transformers", "Hugging Face", "Python"],
@@ -43,25 +46,19 @@ export const experiences = [
     title: "Machine Learning Engineer",
     company: "CyberX",
     location: "Calgary, AB",
-    icon: "beaker",
     period: "2023 - 2023",
     description: [
-      "Increased profitability of Uniswap V3 liquidity positions by using unsupervised learning techniques to optimize trading strategies",
-      "Built ETL pipeline for data extraction and transformation",
-      "Generated actionable market insights for over 100,000 users",
+      "Increased profitability of Uniswap V3 liquidity positions by using unsupervised learning techniques to optimize trading strategies"
     ],
     technologies: ["TensorFlow", "Scikit-Learn", "Python"],
   },
   {
     title: "Software Engineer Intern",
     company: "KPMG",
-    location: "Vancouver, BC",
-    icon: "building",
+    location: "Toronto, ON",
     period: "2022 - 2022",
     description: [
-      "Improved frontend test coverage",
-      "Improved performance of internal data analytics tool",
-      "Reduced API response time through query optimization and caching",
+      "Worked on internal tools, improved frontend test coverage, improved backend performance through caching and query optimizations",
     ],
     technologies: ["React", "Django", "MySQL", "JavaScript", "Python"],
   },
@@ -69,7 +66,6 @@ export const experiences = [
     title: "Machine Learning Researcher",
     company: "University of British Columbia, Department of Mathematics",
     location: "Vancouver, BC",
-    icon: "beaker",
     period: "2020 - 2020",
     description: [
       "Developed simulation with OpenAI Gym for PID tuning in control systems",
@@ -81,7 +77,6 @@ export const experiences = [
     title: "Engineering Intern",
     company: "Discover Battery",
     location: "Richmond, BC",
-    icon: "wrench",
     period: "2019-2020",
     description: [
       "Designed and produced bill of materials for battery pack manufacturing",

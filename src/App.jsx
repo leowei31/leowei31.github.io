@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react";
-import "./App.css";
 
+import SmoothScroll from "./components/SmoothScroll";
 import NavSidebar from "./components/NavSidebar";
 import HeroScene from "./components/sections/HeroScene";
 import ExperienceSection from "./components/sections/ExperienceSection";
@@ -9,121 +9,62 @@ import ExtracurricularSection from "./components/sections/ExtracurricularSection
 import AcademicsSection from "./components/sections/AcademicsSection";
 import SkillsSection from "./components/sections/SkillsSection";
 import Footer from "./components/sections/Footer";
-import { AchievementProvider } from "./context/AchievementContext";
-import AchievementToast from "./components/gamification/AchievementToast";
-import AchievementPanel from "./components/gamification/AchievementPanel";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { useScrollSection } from "./hooks/useScrollSection";
-import { useAchievements } from "./hooks/useAchievements";
+import { ScrollTrigger } from "./lib/scroll";
 
-// Konami code sequence
-const KONAMI_CODE = [
-  "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
-  "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
-  "KeyB", "KeyA",
-];
+// 3D room objects that simply jump to a section when clicked
+const NAVIGATION_TARGETS = new Set([
+  "experience",
+  "projects",
+  "skills",
+  "academics",
+  "extracurricular",
+]);
 
 const AppContent = () => {
   const { activeSection, scrollToSection } = useScrollSection();
-  const {
-    unlockAchievement,
-    trackObjectInteraction,
-    trackSectionVisit,
-    trackPlantClick,
-  } = useAchievements();
+  const { toggleTheme } = useTheme();
 
-  // Track section visits on scroll
+  // Pinned sections shift layout once images and fonts settle - re-measure then
   useEffect(() => {
-    trackSectionVisit(activeSection);
-  }, [activeSection, trackSectionVisit]);
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+    document.fonts?.ready.then(refresh);
+    return () => window.removeEventListener("load", refresh);
+  }, []);
 
-  // Konami code listener
-  useEffect(() => {
-    let position = 0;
-    const handleKeyDown = (e) => {
-      if (e.code === KONAMI_CODE[position]) {
-        position++;
-        if (position === KONAMI_CODE.length) {
-          unlockAchievement("konami");
-          position = 0;
-        }
-      } else {
-        position = 0;
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [unlockAchievement]);
-
-  // Handle 3D room object clicks
+  // The lamp, mug and plant react on their own inside the scene
   const handleRoomInteraction = useCallback(
-    (objectId, extra) => {
-      // Navigation objects
-      const sectionMap = {
-        experience: "experience",
-        projects: "projects",
-        skills: "skills",
-        academics: "academics",
-        extracurricular: "extracurricular",
-      };
-
-      if (sectionMap[objectId]) {
-        scrollToSection(sectionMap[objectId]);
-        trackObjectInteraction(objectId);
-        return;
-      }
-
-      // Special interactions
-      switch (objectId) {
-        case "window":
-          trackObjectInteraction("window");
-          unlockAchievement("night_owl");
-          break;
-        case "lamp":
-          trackObjectInteraction("lamp");
-          unlockAchievement("mood_lighting");
-          break;
-        case "coffee":
-          trackObjectInteraction("coffee");
-          unlockAchievement("caffeine_boost");
-          break;
-        case "plant":
-          trackObjectInteraction("plant");
-          trackPlantClick();
-          break;
-      }
+    (objectId) => {
+      if (NAVIGATION_TARGETS.has(objectId)) scrollToSection(objectId);
+      else if (objectId === "window") toggleTheme();
     },
-    [
-      scrollToSection,
-      trackObjectInteraction,
-      unlockAchievement,
-      trackPlantClick,
-    ]
+    [scrollToSection, toggleTheme]
   );
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-y-auto overflow-x-hidden snap-y snap-mandatory box-border isolation-isolate">
-      <NavSidebar activeSection={activeSection} onNavigate={scrollToSection} />
+    <>
+      <SmoothScroll />
+      <NavSidebar activeSection={activeSection} onNavigate={scrollToSection} onToggleTheme={toggleTheme} />
 
-      <HeroScene onSectionNavigate={handleRoomInteraction} />
-      <ExperienceSection />
-      <ProjectsSection />
-      <ExtracurricularSection />
-      <AcademicsSection />
-      <SkillsSection />
+      <main className="relative z-10 rounded-b-[2rem] bg-bg shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition-colors duration-700 md:rounded-b-[3rem]">
+        <HeroScene onObjectClick={handleRoomInteraction} onNavigate={scrollToSection} />
+        <ExperienceSection />
+        <ProjectsSection />
+        <ExtracurricularSection />
+        <AcademicsSection />
+        <SkillsSection />
+      </main>
       <Footer />
-
-      <AchievementToast />
-      <AchievementPanel />
-    </div>
+    </>
   );
 };
 
-const App = () => {
-  return (
-    <AchievementProvider>
-      <AppContent />
-    </AchievementProvider>
-  );
-};
+const App = () => (
+  <ThemeProvider>
+    <AppContent />
+  </ThemeProvider>
+);
 
 export default App;
